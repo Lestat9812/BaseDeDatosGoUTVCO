@@ -5,6 +5,10 @@ import (
 	"log"
 	"os"
 
+	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/adapters/handlers"
+	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/adapters/repositories"
+	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
+	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/services"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/server"
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/joho/godotenv"
@@ -47,46 +51,28 @@ func main() {
 	}
 
 	dbConnString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName)
-	jwtDbConnString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.JWTDbUser, cfg.JWTDbPassword, cfg.JWTDbHost, cfg.JWTDbPort, cfg.JWTDbName)
+	// jwtDbConnString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.JWTDbUser, cfg.JWTDbPassword, cfg.JWTDbHost, cfg.JWTDbPort, cfg.JWTDbName)
 
 	db, err := gorm.Open(mysql.Open(dbConnString), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
 
-	jwtDb, err := gorm.Open(mysql.Open(jwtDbConnString), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
+	// jwtDb, err := gorm.Open(mysql.Open(jwtDbConnString), &gorm.Config{})
+	// if err != nil {
+	// 	panic("failed to connect database")
+	// }
 
-	db.AutoMigrate(domain.Accion{}, domain.Bitacora{}, domain.Categoria{}, domain.CatAreas{}, domain.CatMunicipios{}, domain.CatLocalidades{}, domain.Encargado{}, domain.Entrada{}, domain.Entradas_Producto{},
-		domain.Inmueble{}, domain.Inventario{}, domain.Localidad{}, domain.Municipio{}, domain.Persona{}, domain.Presentacion{}, domain.Producto{}, domain.Programa{}, domain.Region{}, domain.Salida{},
-		domain.Salidas_Producto{}, domain.Usuario{})
+	db.AutoMigrate(domains.Alumno{})
 
-	middlewares.Init(jwtDb)
+	// middlewares.Init(jwtDb)
 
-	entradaRepository := repositories.NewEntradaRepository(db)
-	entradaService := services.NewEntradaService(entradaRepository)
-	entradaHandler := handlers.NewEntradaHandler(entradaService)
+	alumnoRepository := repositories.NewAlumnoRepository(db)
+	alumnoService := services.NewAlumnoService(alumnoRepository)
+	alumnoHandler := handlers.NewAlumnoHandler(alumnoService)
 
 	server := server.NewServer(
-		entradaHandler,
-		municipioHandler,
-		localidadHandler,
-		regionHandler,
-		inmuebleHandler,
-		programaHandler,
-		salidaHandler,
-		categoriaHandler,
-		productoHandler,
-		presentacionHandler,
-		entradaProductoHandler,
-		inventarioHandler,
-		salidaProductoHandler,
-		encargadoHandler,
-		personaHandler,
-		usuarioHandler,
-		externosHandler,
+		alumnoHandler,
 	)
 
 	server.Initizalize().Listen(":8000")
