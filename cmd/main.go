@@ -8,6 +8,7 @@ import (
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/adapters/handlers"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/adapters/repositories"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
+	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/middlewares"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/services"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/server"
 	"github.com/ilyakaznacheev/cleanenv"
@@ -63,9 +64,13 @@ func main() {
 	// 	panic("failed to connect database")
 	// }
 
-	db.AutoMigrate(domains.Alumno{})
+	// db.Statement.Exec("DROP TABLE IF EXISTS `alumnos`, `alumno_grupos`, `grupos`, `periodos`, `personal`, `carreras`, `ut_campus`;")
+	db.SetupJoinTable(&domains.Alumno{}, "Grupos", &domains.AlumnoGrupo{})
+	db.AutoMigrate(domains.Alumno{}, domains.Grupo{})
 
-	// middlewares.Init(jwtDb)
+	// domains.AlumnoGrupo{})
+
+	middlewares.Init(db)
 
 	alumnoRepository := repositories.NewAlumnoRepository(db)
 	alumnoService := services.NewAlumnoService(alumnoRepository)
