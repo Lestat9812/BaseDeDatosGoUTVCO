@@ -28,7 +28,7 @@ type Alumno struct { //Usuarios de plataforma?
 	FechaIgualdad    time.Time  `gorm:"column:fechaigualdad"`
 	FechaClases      time.Time  `gorm:"column:fechaclases"`
 	VisitaClases     int        `gorm:"column:visitaclases"`
-	Grupos           []Grupo    `gorm:"many2many:alumnos_grupos;"`
+	Grupos           []Grupo    `gorm:"many2many:alumno_grupos;"`
 }
 
 type AlumnoGrupo struct {
@@ -41,13 +41,5 @@ type AlumnoGrupo struct {
 }
 
 func (AlumnoGrupo) TableName() string {
-	return "alumnos_grupos"
+	return "alumno_grupos"
 }
-
-// func (AlumnoGrupo) BeforeCreate(db *gorm.DB) error {
-
-// 	err := db.SetupJoinTable(&Alumno{}, "Grupos", &AlumnoGrupo{})
-
-// 	return err
-
-// }

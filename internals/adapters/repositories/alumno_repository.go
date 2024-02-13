@@ -1,8 +1,6 @@
 package repositories
 
 import (
-
-	//"gitlab.com/l-cm/api-giras/internals/core/domains"
 	"errors"
 
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
@@ -19,8 +17,8 @@ func NewAlumnoRepository(storage *gorm.DB) *AlumnoRepository {
 	}
 }
 
-func (r *AlumnoRepository) SaveAlumno(encargado *domains.Alumno) error {
-	result := r.db.Create(&encargado)
+func (r *AlumnoRepository) SaveAlumno(alumno *domains.Alumno) error {
+	result := r.db.Create(&alumno)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -43,22 +41,22 @@ func (r *AlumnoRepository) AllAlumnos() ([]*domains.Alumno, error) {
 }
 
 func (r *AlumnoRepository) FindAlumnoById(id int) (*domains.Alumno, error) {
-	var encargado domains.Alumno
+	var alumno domains.Alumno
 	result := r.db.
-		First(&encargado, "id = ?", id)
+		First(&alumno, "id = ?", id)
 
 	if result.RowsAffected == 0 {
 		return &domains.Alumno{}, errors.New("data not found")
 	}
-	return &encargado, nil
+	return &alumno, nil
 }
-func (r *AlumnoRepository) UpdateAlumno(encargado *domains.Alumno) error {
-	result := r.db.Model(&domains.Alumno{}).Where("id = ?", encargado.ID).Updates(encargado)
+func (r *AlumnoRepository) UpdateAlumno(alumno *domains.Alumno) error {
+	result := r.db.Model(&domains.Alumno{}).Where("id = ?", alumno.ID).Updates(alumno)
 	if result.Error != nil {
 		return result.Error
 	}
 	if result.RowsAffected == 0 {
-		return errors.New("encargado no actualizado")
+		return errors.New("alumno no actualizado")
 	}
 	return nil
 }
@@ -67,7 +65,7 @@ func (r *AlumnoRepository) DeleteAlumno(id int) error {
 	var deletedAlumno domains.Alumno
 	result := r.db.Where("id = ?", id).Delete(&deletedAlumno)
 	if result.RowsAffected == 0 {
-		return errors.New("encargado no borrado")
+		return errors.New("alumno no borrado")
 	}
 	return nil
 }

@@ -3,14 +3,13 @@ package ports
 import (
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
 	"github.com/gofiber/fiber/v2"
-	// "gitlab.com/l-cm/api-alumnos/internals/core/domain"
 )
 
 type IAlumnoHandler interface {
 	NuevoAlumno(c *fiber.Ctx) error
 	TodosAlumnos(c *fiber.Ctx) error
 	UnAlumno(c *fiber.Ctx) error
-	EditaAlumno(c *fiber.Ctx) error
+	EditarAlumno(c *fiber.Ctx) error
 	BorrarAlumno(c *fiber.Ctx) error
 }
 

@@ -4,28 +4,26 @@ import (
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/ports"
 	"github.com/gofiber/fiber/v2"
-	// "gitlab.com/l-cm/api-encargados/internals/core/domains"
-	// "gitlab.com/l-cm/api-encargados/internals/core/ports"
 )
 
 type AlumnoHandler struct {
-	encargadoService ports.IAlumnoService
+	alumnoService ports.IAlumnoService
 }
 
 func NewAlumnoHandler(service ports.IAlumnoService) *AlumnoHandler {
 	return &AlumnoHandler{
-		encargadoService: service,
+		alumnoService: service,
 	}
 }
 
 func (h *AlumnoHandler) NuevoAlumno(c *fiber.Ctx) error {
-	don := new(domains.Alumno)
-	if err := c.BodyParser(don); err != nil {
+	alumno := new(domains.Alumno)
+	if err := c.BodyParser(alumno); err != nil {
 		return c.Status(400).JSON(&domains.ErrorResponse{
 			Message: "Invalid body parser",
 		})
 	}
-	err := h.encargadoService.GuardarAlumno(don)
+	err := h.alumnoService.GuardarAlumno(alumno)
 	if err != nil {
 		return c.Status(404).JSON(&domains.ErrorResponse{
 			Message: err.Error(),
@@ -37,7 +35,7 @@ func (h *AlumnoHandler) NuevoAlumno(c *fiber.Ctx) error {
 }
 
 func (h *AlumnoHandler) TodosAlumnos(c *fiber.Ctx) error {
-	res, err := h.encargadoService.ObtenerTodosAlumnos()
+	res, err := h.alumnoService.ObtenerTodosAlumnos()
 	if err != nil {
 		return c.Status(404).JSON(&domains.ErrorResponse{
 			Message: err.Error(),
@@ -55,7 +53,7 @@ func (h *AlumnoHandler) UnAlumno(c *fiber.Ctx) error {
 			Message: "Invalid id",
 		})
 	}
-	res, err := h.encargadoService.ObtenerUnAlumno(id)
+	res, err := h.alumnoService.ObtenerUnAlumno(id)
 	if err != nil {
 		return c.Status(404).JSON(&domains.ErrorResponse{
 			Message: err.Error(),
@@ -67,21 +65,21 @@ func (h *AlumnoHandler) UnAlumno(c *fiber.Ctx) error {
 	})
 }
 
-func (h *AlumnoHandler) EditaAlumno(c *fiber.Ctx) error {
-	encargado := new(domains.Alumno)
+func (h *AlumnoHandler) EditarAlumno(c *fiber.Ctx) error {
+	alumno := new(domains.Alumno)
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(400).JSON(&domains.ErrorResponse{
 			Message: "Invalid bid",
 		})
 	}
-	if err := c.BodyParser(encargado); err != nil {
+	if err := c.BodyParser(alumno); err != nil {
 		return c.Status(400).JSON(&domains.ErrorResponse{
 			Message: "Invalid body parser",
 		})
 	}
-	encargado.ID = uint(id)
-	error := h.encargadoService.ActualizarAlumno(encargado)
+	alumno.ID = uint(id)
+	error := h.alumnoService.ActualizarAlumno(alumno)
 	if error != nil {
 		return c.Status(404).JSON(&domains.ErrorResponse{
 			Message: error.Error(),
@@ -100,7 +98,7 @@ func (h *AlumnoHandler) BorrarAlumno(c *fiber.Ctx) error {
 			Message: "Invalid id",
 		})
 	}
-	err := h.encargadoService.EliminarAlumno(id)
+	err := h.alumnoService.EliminarAlumno(id)
 	if err != nil {
 		return c.Status(404).JSON(&domains.ErrorResponse{
 			Message: error.Error(),

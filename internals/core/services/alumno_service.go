@@ -5,21 +5,18 @@ import (
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/ports"
 )
 
-// "gitlab.com/l-cm/api-giras/internals/core/domains"
-// "gitlab.com/l-cm/api-giras/internals/core/ports"
-
 type AlumnoService struct {
-	encargadoRepository ports.IAlumnoRepository
+	alumnoRepository ports.IAlumnoRepository
 }
 
 func NewAlumnoService(repository ports.IAlumnoRepository) *AlumnoService {
 	return &AlumnoService{
-		encargadoRepository: repository,
+		alumnoRepository: repository,
 	}
 }
 
-func (s *AlumnoService) GuardarAlumno(encargado *domains.Alumno) error {
-	err := s.encargadoRepository.SaveAlumno(encargado)
+func (s *AlumnoService) GuardarAlumno(alumno *domains.Alumno) error {
+	err := s.alumnoRepository.SaveAlumno(alumno)
 	if err != nil {
 		return err
 	}
@@ -27,7 +24,7 @@ func (s *AlumnoService) GuardarAlumno(encargado *domains.Alumno) error {
 }
 
 func (s *AlumnoService) ObtenerTodosAlumnos() ([]*domains.Alumno, error) {
-	res, err := s.encargadoRepository.AllAlumnos()
+	res, err := s.alumnoRepository.AllAlumnos()
 	if err != nil {
 		return nil, err
 	}
@@ -35,15 +32,15 @@ func (s *AlumnoService) ObtenerTodosAlumnos() ([]*domains.Alumno, error) {
 }
 
 func (s *AlumnoService) ObtenerUnAlumno(id int) (*domains.Alumno, error) {
-	res, err := s.encargadoRepository.FindAlumnoById(id)
+	res, err := s.alumnoRepository.FindAlumnoById(id)
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func (s *AlumnoService) ActualizarAlumno(encargado *domains.Alumno) error {
-	err := s.encargadoRepository.UpdateAlumno(encargado)
+func (s *AlumnoService) ActualizarAlumno(alumno *domains.Alumno) error {
+	err := s.alumnoRepository.UpdateAlumno(alumno)
 	if err != nil {
 		return err
 	}
@@ -51,7 +48,7 @@ func (s *AlumnoService) ActualizarAlumno(encargado *domains.Alumno) error {
 }
 
 func (s *AlumnoService) EliminarAlumno(id int) error {
-	err := s.encargadoRepository.DeleteAlumno(id)
+	err := s.alumnoRepository.DeleteAlumno(id)
 	if err != nil {
 		return err
 	}
