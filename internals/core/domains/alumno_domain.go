@@ -8,36 +8,36 @@ import (
 
 type Alumno struct { //Usuarios de plataforma?
 	gorm.Model
-	Matricula        string `gorm:"column:matricula"`
-	Estado           string `gorm:"column:estado;comment:(baja_temporal, baja_definitiva, activo)"`
-	CarreraID        uint   `gorm:"column:id_carrera"`
-	Carrera          Carrera
-	Password         string `gorm:"column:password"`
-	PasswordHash     string
-	FechaInscripcion *time.Time `gorm:"column:fecha_inscripcion"`
-	Terminos         int        `gorm:"column:terminos"`
-	VisitaBiblioteca int        `gorm:"column:visitabiblioteca"`
-	VisitaReglamento int        `gorm:"column:visitareglamento"`
-	VisitaEstadia    int        `gorm:"column:visitaestadia"`
-	FechaBiblioteca  time.Time  `gorm:"column:fechabiblioteca"`
-	FechaReglamento  time.Time  `gorm:"column:fechareglamento"`
-	FechaEstadia     time.Time  `gorm:"column:fechaestadia"`
-	VisitaAcoso      int        `gorm:"column:visitaacoso"`
-	FechaAcoso       time.Time  `gorm:"column:fechaacoso"`
-	VisitaIgualdad   int        `gorm:"column:visitaigualdad"`
-	FechaIgualdad    time.Time  `gorm:"column:fechaigualdad"`
-	FechaClases      time.Time  `gorm:"column:fechaclases"`
-	VisitaClases     int        `gorm:"column:visitaclases"`
+	Matricula        string     `gorm:"not null;unique"`
+	Estado           string     `gorm:"not null;comment:'(baja_temporal, baja_definitiva, activo)'"`
+	Password         *string    `gorm:"default:null"`
+	PasswordHash     string     `gorm:"-"`
+	FechaInscripcion *time.Time `gorm:"default:null"`
+	Terminos         int        `gorm:"not null"`
+	VisitaBiblioteca int        `gorm:"not null"`
+	VisitaReglamento int        `gorm:"not null"`
+	VisitaEstadia    int        `gorm:"not null"`
+	FechaBiblioteca  time.Time  `gorm:"not null"`
+	FechaReglamento  time.Time  `gorm:"not null"`
+	FechaEstadia     time.Time  `gorm:"not null"`
+	VisitaAcoso      int        `gorm:"not null"`
+	FechaAcoso       time.Time  `gorm:"not null"`
+	VisitaIgualdad   int        `gorm:"not null"`
+	FechaIgualdad    time.Time  `gorm:"not null"`
+	FechaClases      time.Time  `gorm:"not null"`
+	VisitaClases     int        `gorm:"not null"`
 	Grupos           []Grupo    `gorm:"many2many:alumno_grupos;"`
+	CarreraID        uint
+	Carrera          Carrera
+	EstudianteID     uint
 }
 
 type AlumnoGrupo struct {
-	AlumnoID    int    `gorm:"primaryKey"`
-	GrupoID     int    `gorm:"primaryKey"`
+	AlumnoID    int    `gorm:"foreignKey"`
+	GrupoID     int    `gorm:"foreignKey"`
 	Estado      string `gorm:"column:estado;comment:Indica el estado del grupo para el alumno(aprobado/reprobado)"`
 	Observacion string
-	CreatedAt   time.Time
-	DeletedAt   gorm.DeletedAt
+	gorm.Model
 }
 
 func (AlumnoGrupo) TableName() string {

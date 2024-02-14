@@ -66,7 +66,7 @@ func main() {
 
 	// db.Statement.Exec("DROP TABLE IF EXISTS `alumnos`, `alumno_grupos`, `grupos`, `periodos`, `personal`, `carreras`, `ut_campus`;")
 	db.SetupJoinTable(&domains.Alumno{}, "Grupos", &domains.AlumnoGrupo{})
-	db.AutoMigrate(domains.Alumno{}, domains.Grupo{})
+	db.AutoMigrate(domains.Estudiante{}, domains.Alumno{}, domains.Grupo{})
 
 	// domains.AlumnoGrupo{})
 
