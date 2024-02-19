@@ -26,20 +26,20 @@ type Alumno struct { //Usuarios de plataforma?
 	FechaIgualdad    time.Time  `gorm:"not null"`
 	FechaClases      time.Time  `gorm:"not null"`
 	VisitaClases     int        `gorm:"not null"`
-	Grupos           []Grupo    `gorm:"many2many:alumno_grupos;"`
+	Grupos           []Grupo    `gorm:"many2many:alumnos_grupos;"` //Relación many to many
 	CarreraID        uint
-	Carrera          Carrera
-	EstudianteID     uint
+	Carrera          Carrera //Relación pertenece a
+	EstudianteID     uint    //Relación tiene uno
 }
 
 type AlumnoGrupo struct {
-	AlumnoID    int    `gorm:"foreignKey"`
-	GrupoID     int    `gorm:"foreignKey"`
+	gorm.Model
+	AlumnoID    int    `gorm:"primaryKey"`
+	GrupoID     int    `gorm:"primaryKey"`
 	Estado      string `gorm:"column:estado;comment:Indica el estado del grupo para el alumno(aprobado/reprobado)"`
 	Observacion string
-	gorm.Model
 }
 
-func (AlumnoGrupo) TableName() string {
-	return "alumno_grupos"
-}
+// func (AlumnoGrupo) TableName() string {
+// 	return "alumno_grupos"
+// }
