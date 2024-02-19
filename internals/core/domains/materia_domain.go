@@ -8,5 +8,6 @@ type Materia struct {
 	Horas        int    `gorm:"default:null"`
 	Cuatrimestre int    `gorm:"not null;comment:'cuarimestre de la materia'"`
 	CarreraID    uint   `gorm:"not null;comment:'carrera a la que pertenece la materia'"`
-	Estado       *bool  `gorm:"default:null"`
+	Carrera      Carrera
+	Estado       *bool `gorm:"default:null"`
 }
