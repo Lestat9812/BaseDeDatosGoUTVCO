@@ -15,18 +15,18 @@ type Grupo struct {
 	Cupo         int       `gorm:"not null"`
 	PersonalID   uint      `gorm:"not null"`
 	Personal     Personal  `gorm:"foreignKey:PersonalID"`
-	Materias     []Materia `gorm:"manytomany:grupos_materias"`
+	Materias     []Materia `gorm:"manytomany:grupos_materias;"`
 }
 
 type GrupoMateria struct {
 	gorm.Model
-	GrupoID    int `gorm:"primaryKey"`
-	MateriaID  int `gorm:"primaryKey"`
-	PersonalID int `gorm:"primaryKey"`
-	Primero    int
-	Segundo    int
-	Tercero    int
-	Acta1      int
-	Acta2      int
-	Acta3      int
+	GrupoID   int `gorm:"primaryKey"`
+	MateriaID int `gorm:"primaryKey"`
+	// PersonalID int `gorm:"primaryKey"`
+	Primero int
+	Segundo int
+	Tercero int
+	Acta1   int
+	Acta2   int
+	Acta3   int
 }
