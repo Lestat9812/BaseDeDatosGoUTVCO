@@ -26,14 +26,15 @@ type GrupoMateria struct {
 	gorm.Model
 	GrupoID uint
 	// Grupo
-	MateriaID  uint
-	Materia    Materia
-	PersonalID uint //Maestro?
-	Personal
-	Primero int
-	Segundo int
-	Tercero int
-	Acta1   int
-	Acta2   int
-	Acta3   int
+	MateriaID      uint
+	Materia        Materia
+	PersonalID     uint //Maestro?
+	Personal       Personal
+	Primero        int
+	Segundo        int
+	Tercero        int
+	Acta1          int
+	Acta2          int
+	Acta3          int
+	Calificaciones []Calificacion
 }

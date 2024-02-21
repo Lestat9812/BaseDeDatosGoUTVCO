@@ -30,6 +30,7 @@ type Alumno struct { //Usuarios de plataforma?
 	CarreraID        uint
 	Carrera          Carrera //Relación pertenece a
 	EstudianteID     uint    //Relación tiene uno
+	Calificaciones   []Calificacion
 }
 
 type AlumnoGrupo struct {

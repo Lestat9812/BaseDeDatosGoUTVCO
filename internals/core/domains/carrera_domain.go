@@ -6,18 +6,20 @@ import (
 
 type Carrera struct {
 	gorm.Model
-	Nombre      string
-	Tipo        string
-	UtcampusID  int
+	Nombre      string  `gorm:"not null"`
+	Tipo        string  `gorm:"not null"`
+	Duracion    int     `gorm:"not null"`
+	Descripcion *string `gorm:"default:null"`
+	Estado      bool    `gorm:"not null"`
+	Admision    bool    `gorm:"not null"`
+	Siglas      *string `gorm:"default:null"`
+	Nummax1     int     `gorm:"not null"`
+	Nummax2     int     `gorm:"not null"`
+	Nummax3     int     `gorm:"not null"`
+	UtcampusID  uint
 	Utcampus    Utcampus
-	Duracion    int
-	Descripcion string
-	Estado      bool
-	Admision    bool
-	Siglas      string
-	Nummax1     int
-	Nummax2     int
-	Nummax3     int
-	DirectorID  int
+	PersonalID  uint
+	Personal    Personal //Director
+	//DirectorID  int
 	// Director Director   //no existe
 }
