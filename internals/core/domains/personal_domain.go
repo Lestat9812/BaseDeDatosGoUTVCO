@@ -17,9 +17,10 @@ type Personal struct {
 	ApellidoM    string `gorm:"column:apellido_m"`
 	User         string `gorm:"column:user"`
 	Password     string `gorm:"column:password"`
+	PasswordHash string `gorm:"-"`
 	Estado       bool   `gorm:"column:estado"`
 	Adscrito     uint   `gorm:"column:adscrito"`
-	Perfiles     []Perfil
-	GrupoMateria []GrupoMateria
+	Perfiles     []UsuariosPerfiles
+	// GrupoMateria []GrupoMateria //Así no era
 	// PerfilID  uint   `gorm:"column:id_perfil;index"`
 }

@@ -12,3 +12,11 @@ type Perfil struct {
 	gorm.Model
 	Perfil string
 }
+
+type UsuariosPerfiles struct {
+	gorm.Model
+	PersonalID uint
+	Personal   Personal
+	PerfilID   uint
+	Perfil     Perfil
+}

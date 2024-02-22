@@ -36,7 +36,7 @@ func (s *Server) Initizalize() *fiber.App {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Bienvenido, API-Almacén 👋!")
 	})
-	app.Post("/generate", middlewares.Generar)
+	app.Post("/generate", middlewares.GenerarLogAlumno)
 	app.Get("/validate", middlewares.Verificar)
 	app.Post("/refreshToken", middlewares.Refrescar)
 	app.Get("/", middlewares.Authorizar, func(c *fiber.Ctx) error {

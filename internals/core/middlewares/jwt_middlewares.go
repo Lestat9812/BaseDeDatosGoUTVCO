@@ -103,7 +103,7 @@ func Usuarios(c *fiber.Ctx) error {
 // 	return encargadoRoles, nil
 // }
 
-func Generar(c *fiber.Ctx) error {
+func GenerarLogAlumno(c *fiber.Ctx) error {
 	// jwt := new(Usuario)
 	jwt := new(domains.Alumno)
 	if err := c.BodyParser(jwt); err != nil {
@@ -117,7 +117,7 @@ func Generar(c *fiber.Ctx) error {
 		})
 	}
 
-	res, roles, err := GenerateToken(jwt)
+	res, err := GenerateTokenAlumno(jwt)
 	if err != nil {
 		return c.Status(404).JSON(&fiber.Map{
 			"message": err.Error(),
@@ -127,7 +127,34 @@ func Generar(c *fiber.Ctx) error {
 	return c.Status(200).JSON(&fiber.Map{
 		"usuario": jwt.Matricula,
 		"token":   res,
-		"roles":   roles,
+	})
+}
+
+func GenerarLogMaestro(c *fiber.Ctx) error {
+	// jwt := new(Usuario)
+	jwt := new(domains.Personal)
+	if err := c.BodyParser(jwt); err != nil {
+		return c.Status(400).JSON(&fiber.Map{
+			"message": "Invalid body parser",
+		})
+	}
+	if jwt.User == "" || jwt.Password == "" {
+		return c.Status(400).JSON(&fiber.Map{
+			"message": "Invalid credentials",
+		})
+	}
+
+	res, perfiles, err := GenerateTokenMaestro(jwt)
+	if err != nil {
+		return c.Status(404).JSON(&fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(200).JSON(&fiber.Map{
+		"usuario":  jwt.User,
+		"token":    res,
+		"perfiles": perfiles,
 	})
 }
 
@@ -200,9 +227,34 @@ func Refrescar(c *fiber.Ctx) error {
 	})
 }
 
-func GenerateToken(jwtParams *domains.Alumno) (string, []domains.Perfil, error) {
+func GenerateTokenAlumno(jwtParams *domains.Alumno) (string, error) {
 	var login *domains.Alumno
-	if res := db.Preload(clause.Associations).Preload("Perfiles.Perfil").Where("matricula = ?", jwtParams.Matricula).First(&login); res.Error != nil {
+	if res := db.Preload(clause.Associations).Where("matricula = ?", jwtParams.Matricula).First(&login); res.Error != nil {
+		return "", res.Error
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(login.Password), []byte(jwtParams.Password))
+	if err != nil {
+		return "", err
+	}
+	jwtParams.PasswordHash = login.Password
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["id"] = login.ID
+	claims["userId"] = jwtParams.Matricula
+	claims["passwordHash"] = jwtParams.PasswordHash
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+
+	tokenString, err := token.SignedString([]byte("llave-secreta-xd"))
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+}
+func GenerateTokenMaestro(jwtParams *domains.Personal) (string, []domains.UsuariosPerfiles, error) {
+	var login *domains.Personal
+	if res := db.Preload(clause.Associations).Preload("Perfiles.Perfil").Where("user = ?", jwtParams.User).First(&login); res.Error != nil {
 		return "", nil, res.Error
 	}
 
@@ -214,7 +266,7 @@ func GenerateToken(jwtParams *domains.Alumno) (string, []domains.Perfil, error) 
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["id"] = login.ID
-	claims["userId"] = jwtParams.Matricula
+	claims["userId"] = jwtParams.User
 	claims["passwordHash"] = jwtParams.PasswordHash
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
