@@ -10,7 +10,7 @@ type Alumno struct { //Usuarios de plataforma?
 	gorm.Model
 	Matricula        string     `gorm:"not null;unique"`
 	Estado           string     `gorm:"not null;comment:'(baja_temporal, baja_definitiva, activo)'"`
-	Password         *string    `gorm:"default:null"`
+	Password         string     //`gorm:"default:null"`
 	PasswordHash     string     `gorm:"-"`
 	FechaInscripcion *time.Time `gorm:"default:null"`
 	Terminos         int        `gorm:"not null"`
@@ -29,7 +29,8 @@ type Alumno struct { //Usuarios de plataforma?
 	Grupos           []Grupo    `gorm:"many2many:alumnos_grupos;"` //Relación many to many
 	CarreraID        uint
 	Carrera          Carrera //Relación pertenece a
-	EstudianteID     uint    //Relación tiene uno
+	Perfiles         []Perfil
+	EstudianteID     uint //Relación tiene uno
 	Calificaciones   []Calificacion
 }
 

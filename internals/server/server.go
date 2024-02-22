@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/middlewares"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/ports"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -32,20 +33,14 @@ func (s *Server) Initizalize() *fiber.App {
 	alumno.Put("/:id", s.alumnoHandler.EditarAlumno)
 	alumno.Delete("/:id", s.alumnoHandler.BorrarAlumno)
 
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Bienvenido, API-Almacén 👋!")
+	})
+	app.Post("/generate", middlewares.Generar)
+	app.Get("/validate", middlewares.Verificar)
+	app.Post("/refreshToken", middlewares.Refrescar)
+	app.Get("/", middlewares.Authorizar, func(c *fiber.Ctx) error {
+		return c.SendString("Bienvenido, API-Almacén 👋!")
+	})
 	return app
 }
-
-// app.Get("/", func(c *fiber.Ctx) error {
-// 	return c.SendString("Bienvenido, API-Almacén 👋!")
-// })
-// app.Post("/generate", middlewares.Generar)
-// app.Get("/validate", middlewares.Verificar)
-// app.Post("/refreshToken", middlewares.Refrescar)
-/*app.Get("/", handlers.Authorizar, func(c *fiber.Ctx) error {
-	return c.SendString("Bienvenido, API-Almacén 👋!")
-})
-
-
-app.Post("/generate", handlers.Generar)
-app.Get("/validate", handlers.Verificar)
-app.Get("/refreshToken", handlers.Refrescar)*/

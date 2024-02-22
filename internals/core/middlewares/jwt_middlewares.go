@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -103,13 +104,14 @@ func Usuarios(c *fiber.Ctx) error {
 // }
 
 func Generar(c *fiber.Ctx) error {
-	jwt := new(Usuario)
+	// jwt := new(Usuario)
+	jwt := new(domains.Alumno)
 	if err := c.BodyParser(jwt); err != nil {
 		return c.Status(400).JSON(&fiber.Map{
 			"message": "Invalid body parser",
 		})
 	}
-	if jwt.Usuario == "" || jwt.Password == "" {
+	if jwt.Matricula == "" || jwt.Password == "" {
 		return c.Status(400).JSON(&fiber.Map{
 			"message": "Invalid credentials",
 		})
@@ -123,7 +125,7 @@ func Generar(c *fiber.Ctx) error {
 	}
 
 	return c.Status(200).JSON(&fiber.Map{
-		"usuario": jwt.Usuario,
+		"usuario": jwt.Matricula,
 		"token":   res,
 		"roles":   roles,
 	})
@@ -198,9 +200,9 @@ func Refrescar(c *fiber.Ctx) error {
 	})
 }
 
-func GenerateToken(jwtParams *Usuario) (string, []UsuariosRoles, error) {
-	var login *Usuario
-	if res := db.Preload(clause.Associations).Preload("Roles.Rol").Where("usuario = ?", jwtParams.Usuario).First(&login); res.Error != nil {
+func GenerateToken(jwtParams *domains.Alumno) (string, []domains.Perfil, error) {
+	var login *domains.Alumno
+	if res := db.Preload(clause.Associations).Preload("Perfiles.Perfil").Where("matricula = ?", jwtParams.Matricula).First(&login); res.Error != nil {
 		return "", nil, res.Error
 	}
 
@@ -212,7 +214,7 @@ func GenerateToken(jwtParams *Usuario) (string, []UsuariosRoles, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["id"] = login.ID
-	claims["userId"] = jwtParams.Usuario
+	claims["userId"] = jwtParams.Matricula
 	claims["passwordHash"] = jwtParams.PasswordHash
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
@@ -221,7 +223,7 @@ func GenerateToken(jwtParams *Usuario) (string, []UsuariosRoles, error) {
 		return "", nil, err
 	}
 
-	return tokenString, login.Roles, nil
+	return tokenString, login.Perfiles, nil
 }
 
 func ValidateToken(tokenString string) (*Loginxd, error) {
@@ -247,8 +249,8 @@ func ValidateToken(tokenString string) (*Loginxd, error) {
 		// 	panic("failed to connect database")
 		// }
 
-		var login *Usuario
-		if res := db.Where("usuario = ?", userId).First(&login); res.Error != nil {
+		var login *domains.Alumno
+		if res := db.Where("matricula = ?", userId).First(&login); res.Error != nil {
 			return nil, res.Error
 		}
 
@@ -284,8 +286,8 @@ func RefreshToken(tokenString string) (string, error) {
 		// 	panic("failed to connect database")
 		// }
 
-		var login *Usuario
-		if res := db.Where("usuario = ?", userId).First(&login); res.Error != nil {
+		var login *domains.Alumno
+		if res := db.Where("matricula = ?", userId).First(&login); res.Error != nil {
 			return "", res.Error
 		}
 
