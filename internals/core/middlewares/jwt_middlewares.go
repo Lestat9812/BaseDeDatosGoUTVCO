@@ -160,7 +160,7 @@ func GenerarLogMaestro(c *fiber.Ctx) error {
 
 func Verificar(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
-	tokenString := strings.Split(authHeader, " ")[2]
+	tokenString := strings.Split(authHeader, " ")[1]
 	token, err := ValidateToken(tokenString)
 	if err != nil {
 		return c.Status(404).JSON(&fiber.Map{
@@ -185,7 +185,7 @@ func Authorizar(c *fiber.Ctx) error {
 			"message": "Token invalido",
 		})
 	}
-	tokenString := strings.Split(authHeader, " ")[2]
+	tokenString := strings.Split(authHeader, " ")[1]
 	token, err := ValidateToken(tokenString)
 	if err != nil {
 		return c.Status(404).JSON(&fiber.Map{
@@ -252,7 +252,8 @@ func GenerateTokenAlumno(jwtParams *domains.Alumno) (string, error) {
 
 	return tokenString, nil
 }
-func GenerateTokenMaestro(jwtParams *domains.Personal) (string, []domains.UsuariosPerfiles, error) {
+
+func GenerateTokenMaestro(jwtParams *domains.Personal) (string, []domains.Perfil, error) {
 	var login *domains.Personal
 	if res := db.Preload(clause.Associations).Preload("Perfiles.Perfil").Where("user = ?", jwtParams.User).First(&login); res.Error != nil {
 		return "", nil, res.Error
@@ -302,12 +303,19 @@ func ValidateToken(tokenString string) (*Loginxd, error) {
 		// }
 
 		var login *domains.Alumno
+		var login2 *domains.Personal
 		if res := db.Where("matricula = ?", userId).First(&login); res.Error != nil {
+			if res2 := db.Where("user=?", userId).First(&login2); res2.Error != nil {
+				return nil, res2.Error
+			}
 			return nil, res.Error
 		}
 
 		if login.Password != passwordHash {
-			return nil, fmt.Errorf("invalid token")
+			if login2.Password != passwordHash {
+				return nil, fmt.Errorf("token inválido")
+			}
+			return nil, fmt.Errorf("token inválido")
 		}
 
 		return &Loginxd{Usuario: userId, ID: Id}, nil
@@ -333,18 +341,20 @@ func RefreshToken(tokenString string) (string, error) {
 		userId := claims["userId"].(string)
 		passwordHash := claims["passwordHash"].(string)
 
-		// db, error := gorm.Open(mysql.Open("braquetes:Dif*137946@tcp(braqueteserver.mysql.database.azure.com:3306)/donaciones?parseTime=true"), &gorm.Config{})
-		// if error != nil {
-		// 	panic("failed to connect database")
-		// }
-
 		var login *domains.Alumno
+		var login2 *domains.Personal
 		if res := db.Where("matricula = ?", userId).First(&login); res.Error != nil {
+			if res2 := db.Where("user=?", userId).First(&login2); res2.Error != nil {
+				return "", res2.Error
+			}
 			return "", res.Error
 		}
 
 		if login.Password != passwordHash {
-			return "", fmt.Errorf("invalid token")
+			if login2.Password != passwordHash {
+				return "", fmt.Errorf("token inválido")
+			}
+			return "", fmt.Errorf("token inválido")
 		}
 
 		token := jwt.New(jwt.SigningMethodHS256)

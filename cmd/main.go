@@ -59,17 +59,9 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	// jwtDb, err := gorm.Open(mysql.Open(jwtDbConnString), &gorm.Config{})
-	// if err != nil {
-	// 	panic("failed to connect database")
-	// }
-
-	// db.Statement.Exec("DROP TABLE IF EXISTS `alumnos`, `alumno_grupos`, `grupos`, `periodos`, `personal`, `carreras`, `ut_campus`;")
 	db.SetupJoinTable(&domains.Alumno{}, "Grupos", &domains.AlumnoGrupo{})
-	// db.SetupJoinTable(&domains.Grupo{}, "Materias", &domains.GrupoMateria{})
-	db.AutoMigrate(domains.Materia{}, domains.Estudiante{}, domains.Alumno{}, domains.Grupo{}, domains.GrupoMateria{}, domains.Calificacion{}, domains.Perfil{}, domains.UsuariosPerfiles{})
-
-	// domains.AlumnoGrupo{})
+	db.SetupJoinTable(&domains.Personal{}, "Perfiles", &domains.UsuariosPerfiles{})
+	db.AutoMigrate(domains.Materia{}, domains.Perfil{}, domains.Estudiante{}, domains.Alumno{}, domains.Grupo{}, domains.GrupoMateria{}, domains.Calificacion{}, domains.Personal{})
 
 	middlewares.Init(db)
 
@@ -77,8 +69,13 @@ func main() {
 	alumnoService := services.NewAlumnoService(alumnoRepository)
 	alumnoHandler := handlers.NewAlumnoHandler(alumnoService)
 
+	carreraRepository := repositories.NewCarreraRepository(db)
+	carreraService := services.NewCarreraService(carreraRepository)
+	carreraHandler := handlers.NewCarreraHandler(carreraService)
+
 	server := server.NewServer(
 		alumnoHandler,
+		carreraHandler,
 	)
 
 	server.Initizalize().Listen(":8000")

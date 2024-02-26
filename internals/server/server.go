@@ -8,12 +8,14 @@ import (
 )
 
 type Server struct {
-	alumnoHandler ports.IAlumnoHandler
+	alumnoHandler  ports.IAlumnoHandler
+	carreraHandler ports.ICarreraHandler
 }
 
-func NewServer(alumnoHandler ports.IAlumnoHandler) *Server {
+func NewServer(alumnoHandler ports.IAlumnoHandler, carreraHandler ports.ICarreraHandler) *Server {
 	return &Server{
-		alumnoHandler: alumnoHandler,
+		alumnoHandler:  alumnoHandler,
+		carreraHandler: carreraHandler,
 	}
 }
 
@@ -33,9 +35,13 @@ func (s *Server) Initizalize() *fiber.App {
 	alumno.Put("/:id", s.alumnoHandler.EditarAlumno)
 	alumno.Delete("/:id", s.alumnoHandler.BorrarAlumno)
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Bienvenido, API-Almacén 👋!")
-	})
+	carrera := app.Group("/carrera")
+	carrera.Post("/", s.carreraHandler.NuevaCarrera)
+	carrera.Get("/todas", s.carreraHandler.TodasCarreras)
+	carrera.Get("/:id", s.carreraHandler.UnaCarrera)
+	carrera.Put("/:id", s.carreraHandler.EditarCarrera)
+	carrera.Delete("/:id", s.carreraHandler.BorrarCarrera)
+
 	app.Post("/generate", middlewares.GenerarLogAlumno)
 	app.Get("/validate", middlewares.Verificar)
 	app.Post("/refreshToken", middlewares.Refrescar)

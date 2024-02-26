@@ -15,8 +15,8 @@ type Perfil struct {
 
 type UsuariosPerfiles struct {
 	gorm.Model
-	PersonalID uint
-	Personal   Personal
-	PerfilID   uint
-	Perfil     Perfil
+	PersonalID uint     `gorm:"primaryKey"`
+	Personal   Personal //muestra al personal
+	PerfilID   uint     `gorm:"primaryKey"`
+	Perfil     Perfil   //muestra los perfiles
 }
