@@ -69,6 +69,22 @@ func main() {
 	alumnoService := services.NewAlumnoService(alumnoRepository)
 	alumnoHandler := handlers.NewAlumnoHandler(alumnoService)
 
+	personalRepository := repositories.NewPersonalRepository(db)
+	personalService := services.NewPersonalService(personalRepository)
+	personalHandler := handlers.NewPersonalHandler(personalService)
+
+	periodoRepository := repositories.NewPeriodoRepository(db)
+	periodoService := services.NewPeriodoService(periodoRepository)
+	periodoHandler := handlers.NewPeriodoHandler(periodoService)
+
+	materiaRepository := repositories.NewMateriaRepository(db)
+	materiaService := services.NewMateriaService(materiaRepository)
+	materiaHandler := handlers.NewMateriaHandler(materiaService)
+
+	grupoRepository := repositories.NewGrupoRepository(db)
+	grupoService := services.NewGrupoService(grupoRepository)
+	grupoHandler := handlers.NewGrupoHandler(grupoService)
+
 	estudianteRepository := repositories.NewEstudianteRepository(db)
 	estudianteService := services.NewEstudianteService(estudianteRepository)
 	estudianteHandler := handlers.NewEstudianteHandler(estudianteService)
@@ -81,6 +97,10 @@ func main() {
 		alumnoHandler,
 		carreraHandler,
 		estudianteHandler,
+		grupoHandler,
+		periodoHandler,
+		materiaHandler,
+		personalHandler,
 	)
 
 	server.Initizalize().Listen(":8000")
