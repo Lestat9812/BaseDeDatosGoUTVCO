@@ -69,6 +69,10 @@ func main() {
 	alumnoService := services.NewAlumnoService(alumnoRepository)
 	alumnoHandler := handlers.NewAlumnoHandler(alumnoService)
 
+	estudianteRepository := repositories.NewEstudianteRepository(db)
+	estudianteService := services.NewEstudianteService(estudianteRepository)
+	estudianteHandler := handlers.NewEstudianteHandler(estudianteService)
+
 	carreraRepository := repositories.NewCarreraRepository(db)
 	carreraService := services.NewCarreraService(carreraRepository)
 	carreraHandler := handlers.NewCarreraHandler(carreraService)
@@ -76,6 +80,7 @@ func main() {
 	server := server.NewServer(
 		alumnoHandler,
 		carreraHandler,
+		estudianteHandler,
 	)
 
 	server.Initizalize().Listen(":8000")

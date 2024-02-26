@@ -8,14 +8,16 @@ import (
 )
 
 type Server struct {
-	alumnoHandler  ports.IAlumnoHandler
-	carreraHandler ports.ICarreraHandler
+	alumnoHandler     ports.IAlumnoHandler
+	carreraHandler    ports.ICarreraHandler
+	estudianteHandler ports.IEstudianteHandler
 }
 
-func NewServer(alumnoHandler ports.IAlumnoHandler, carreraHandler ports.ICarreraHandler) *Server {
+func NewServer(alHdlr ports.IAlumnoHandler, carHdlr ports.ICarreraHandler, estHdlr ports.IEstudianteHandler) *Server {
 	return &Server{
-		alumnoHandler:  alumnoHandler,
-		carreraHandler: carreraHandler,
+		alumnoHandler:     alHdlr,
+		carreraHandler:    carHdlr,
+		estudianteHandler: estHdlr,
 	}
 }
 
@@ -35,6 +37,13 @@ func (s *Server) Initizalize() *fiber.App {
 	alumno.Put("/:id", s.alumnoHandler.EditarAlumno)
 	alumno.Delete("/:id", s.alumnoHandler.BorrarAlumno)
 
+	estudiante := app.Group("/estudiante")
+	estudiante.Post("/", s.estudianteHandler.NuevoEstudiante)
+	estudiante.Get("/todos", s.estudianteHandler.TodosEstudiantes)
+	estudiante.Get("/:id", s.estudianteHandler.UnEstudiante)
+	estudiante.Put("/:id", s.estudianteHandler.EditarEstudiante)
+	estudiante.Delete("/:id", s.estudianteHandler.BorrarEstudiante)
+
 	carrera := app.Group("/carrera")
 	carrera.Post("/", s.carreraHandler.NuevaCarrera)
 	carrera.Get("/todas", s.carreraHandler.TodasCarreras)
@@ -42,7 +51,8 @@ func (s *Server) Initizalize() *fiber.App {
 	carrera.Put("/:id", s.carreraHandler.EditarCarrera)
 	carrera.Delete("/:id", s.carreraHandler.BorrarCarrera)
 
-	app.Post("/generate", middlewares.GenerarLogAlumno)
+	app.Post("/generateAl", middlewares.GenerarLogAlumno)
+	app.Post("/generateMa", middlewares.GenerarLogMaestro)
 	app.Get("/validate", middlewares.Verificar)
 	app.Post("/refreshToken", middlewares.Refrescar)
 	app.Get("/", middlewares.Authorizar, func(c *fiber.Ctx) error {
