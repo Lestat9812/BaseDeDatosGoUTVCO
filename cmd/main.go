@@ -28,14 +28,6 @@ func main() {
 		DbPort     string `env:"DBPORT"`
 		DbSslmode  string `env:"DBSSLMODE"`
 		DbTimezone string `env:"DBTIMEZONE"`
-		//
-		JWTDbUser        string `env:"JWTDBUSER"`
-		JWTDbPassword    string `env:"JWTDBPASSWORD"`
-		JWTDbName        string `env:"JWTDBNAME"`
-		JWTDbHost        string `env:"JWTDBHOST"`
-		JWTDbPort        string `env:"JWTDBPORT"`
-		JWTDbSslmode     string `env:"JWTDBSSLMODE"`
-		JWTJWTDbTimezone string `env:"JWTDBTIMEZONE"`
 	}
 
 	errno := godotenv.Load()
@@ -52,7 +44,6 @@ func main() {
 	}
 
 	dbConnString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName)
-	// jwtDbConnString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.JWTDbUser, cfg.JWTDbPassword, cfg.JWTDbHost, cfg.JWTDbPort, cfg.JWTDbName)
 
 	db, err := gorm.Open(mysql.Open(dbConnString), &gorm.Config{})
 	if err != nil {

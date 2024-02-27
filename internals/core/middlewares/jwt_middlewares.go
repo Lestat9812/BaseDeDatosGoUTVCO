@@ -255,7 +255,7 @@ func GenerateTokenAlumno(jwtParams *domains.Alumno) (string, error) {
 
 func GenerateTokenMaestro(jwtParams *domains.Personal) (string, []domains.Perfil, error) {
 	var login *domains.Personal
-	if res := db.Preload(clause.Associations).Preload("Perfiles.Perfil").Where("user = ?", jwtParams.User).First(&login); res.Error != nil {
+	if res := db.Preload(clause.Associations).Preload("Perfiles").Where("user = ?", jwtParams.User).First(&login); res.Error != nil {
 		return "", nil, res.Error
 	}
 
@@ -297,25 +297,32 @@ func ValidateToken(tokenString string) (*Loginxd, error) {
 		userId := claims["userId"].(string)
 		passwordHash := claims["passwordHash"].(string)
 
-		// db, error := gorm.Open(mysql.Open("braquetes:Dif*137946@tcp(braqueteserver.mysql.database.azure.com:3306)/donaciones?parseTime=true"), &gorm.Config{})
-		// if error != nil {
-		// 	panic("failed to connect database")
-		// }
-
 		var login *domains.Alumno
 		var login2 *domains.Personal
+		var myFlag bool = false
 		if res := db.Where("matricula = ?", userId).First(&login); res.Error != nil {
+			myFlag = true
+			if !myFlag {
+				return nil, res.Error
+			}
+		} else if myFlag {
 			if res2 := db.Where("user=?", userId).First(&login2); res2.Error != nil {
+				fmt.Print("Hola2")
 				return nil, res2.Error
 			}
-			return nil, res.Error
+
 		}
 
 		if login.Password != passwordHash {
+			myFlag = true
+			if !myFlag {
+				return nil, fmt.Errorf("token inválido")
+			}
+		} else if myFlag {
 			if login2.Password != passwordHash {
 				return nil, fmt.Errorf("token inválido")
 			}
-			return nil, fmt.Errorf("token inválido")
+
 		}
 
 		return &Loginxd{Usuario: userId, ID: Id}, nil
@@ -338,27 +345,42 @@ func RefreshToken(tokenString string) (string, error) {
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 
+		id := claims["id"]
 		userId := claims["userId"].(string)
 		passwordHash := claims["passwordHash"].(string)
 
 		var login *domains.Alumno
 		var login2 *domains.Personal
+		var myFlag bool = false
 		if res := db.Where("matricula = ?", userId).First(&login); res.Error != nil {
+			myFlag = true
+			if !myFlag {
+				return "", res.Error
+			}
+		} else if myFlag {
 			if res2 := db.Where("user=?", userId).First(&login2); res2.Error != nil {
+				fmt.Print("Hola2")
 				return "", res2.Error
 			}
-			return "", res.Error
+
 		}
 
 		if login.Password != passwordHash {
+			myFlag = true
+			if !myFlag {
+				return "", fmt.Errorf("token inválido")
+			}
+		} else if myFlag {
 			if login2.Password != passwordHash {
 				return "", fmt.Errorf("token inválido")
 			}
-			return "", fmt.Errorf("token inválido")
+
 		}
 
 		token := jwt.New(jwt.SigningMethodHS256)
 		claims := token.Claims.(jwt.MapClaims)
+		//ID???? Sí le faltaba
+		claims["id"] = id
 		claims["userId"] = userId
 		claims["passwordHash"] = passwordHash
 		claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
