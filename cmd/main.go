@@ -64,6 +64,10 @@ func main() {
 	personalService := services.NewPersonalService(personalRepository)
 	personalHandler := handlers.NewPersonalHandler(personalService)
 
+	utcampusRepository := repositories.NewUtcampusRepository(db)
+	utcampusService := services.NewUtcampusService(utcampusRepository)
+	utcampusHandler := handlers.NewUtcampusHandler(utcampusService)
+
 	periodoRepository := repositories.NewPeriodoRepository(db)
 	periodoService := services.NewPeriodoService(periodoRepository)
 	periodoHandler := handlers.NewPeriodoHandler(periodoService)
@@ -90,8 +94,9 @@ func main() {
 		estudianteHandler,
 		grupoHandler,
 		periodoHandler,
-		materiaHandler,
 		personalHandler,
+		utcampusHandler,
+		materiaHandler,
 	)
 
 	server.Initizalize().Listen(":8000")

@@ -14,21 +14,23 @@ type Server struct {
 	grupoHandler      ports.IGrupoHandler
 	periodoHandler    ports.IPeriodoHandler
 	personalHandler   ports.IPersonalHandler
+	utcampusHandler   ports.IUtcampusHandler
 	materiaHandler    ports.IMateriaHandler
 }
 
 func NewServer(alHdlr ports.IAlumnoHandler, carHdlr ports.ICarreraHandler,
 	estHdlr ports.IEstudianteHandler, grHdlr ports.IGrupoHandler,
-	peHdlr ports.IPeriodoHandler, matHdlr ports.IMateriaHandler,
-	persHdlr ports.IPersonalHandler) *Server {
+	peHdlr ports.IPeriodoHandler, persHdlr ports.IPersonalHandler,
+	utcHdlr ports.IUtcampusHandler, matHdlr ports.IMateriaHandler) *Server {
 	return &Server{
 		alumnoHandler:     alHdlr,
 		carreraHandler:    carHdlr,
 		estudianteHandler: estHdlr,
 		grupoHandler:      grHdlr,
 		periodoHandler:    peHdlr,
-		materiaHandler:    matHdlr,
 		personalHandler:   persHdlr,
+		utcampusHandler:   utcHdlr,
+		materiaHandler:    matHdlr,
 	}
 }
 
@@ -54,6 +56,13 @@ func (s *Server) Initizalize() *fiber.App {
 	personal.Get("/:id", s.personalHandler.UnPersonal)
 	personal.Put("/:id", s.personalHandler.EditarPersonal)
 	personal.Delete("/:id", s.personalHandler.BorrarPersonal)
+
+	utcampus := app.Group("/utcampus")
+	utcampus.Post("/", s.utcampusHandler.NuevoUtcampus)
+	utcampus.Get("/todos", s.utcampusHandler.TodosUtcampus)
+	utcampus.Get("/:id", s.utcampusHandler.UnUtcampus)
+	utcampus.Put("/:id", s.utcampusHandler.EditarUtcampus)
+	utcampus.Delete("/:id", s.utcampusHandler.BorrarUtcampus)
 
 	periodo := app.Group("/periodo")
 	periodo.Post("/", s.periodoHandler.NuevoPeriodo)
@@ -95,7 +104,7 @@ func (s *Server) Initizalize() *fiber.App {
 	app.Get("/validate", middlewares.Verificar)
 	app.Post("/refreshToken", middlewares.Refrescar)
 	app.Get("/", middlewares.Authorizar, func(c *fiber.Ctx) error {
-		return c.SendString("Bienvenido, API-Almacén 👋!")
+		return c.SendString("Bienvenido, Servicios Escolares UTVCO 👋!")
 	})
 	return app
 }

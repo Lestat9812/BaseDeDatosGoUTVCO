@@ -27,10 +27,10 @@ type Alumno struct { //Usuarios de plataforma?
 	FechaClases      time.Time  `gorm:"not null"`
 	VisitaClases     int        `gorm:"not null"`
 	EstudianteID     uint       //Relación tiene uno
-	Grupos           []Grupo    `gorm:"many2many:alumnos_grupos;"` //Relación many to many
 	CarreraID        uint
-	Carrera          Carrera //Relación pertenece a
-	Calificaciones   []Calificacion
+	// Carrera          Carrera //Relación pertenece a
+	Grupos         []Grupo `gorm:"many2many:alumnos_grupos;"` //Relación many to many
+	Calificaciones []Calificacion
 	// Perfiles         []Perfil //Relación has many  //Necesita perfil?
 }
 

@@ -1,6 +1,7 @@
 package ports
 
 import (
+	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/adapters/repositories"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,7 +17,7 @@ type IAlumnoHandler interface {
 type IAlumnoRepository interface {
 	SaveAlumno(alumno *domains.Alumno) error
 	AllAlumnos() ([]*domains.Alumno, error)
-	FindAlumnoById(id int) (*domains.Alumno, error)
+	FindAlumnoById(id int) (*repositories.AlumnoSinNada, error)
 	UpdateAlumno(alumno *domains.Alumno) error
 	DeleteAlumno(id int) error
 }
@@ -24,7 +25,7 @@ type IAlumnoRepository interface {
 type IAlumnoService interface {
 	GuardarAlumno(alumno *domains.Alumno) error
 	ObtenerTodosAlumnos() ([]*domains.Alumno, error)
-	ObtenerUnAlumno(id int) (*domains.Alumno, error)
+	ObtenerUnAlumno(id int) (*repositories.AlumnoSinNada, error)
 	ActualizarAlumno(alumno *domains.Alumno) error
 	EliminarAlumno(id int) error
 }
