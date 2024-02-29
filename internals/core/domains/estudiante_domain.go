@@ -52,35 +52,36 @@ type Estudiante struct {
 	EmailTutor             *string   `gorm:"default:null;comment:'Correo electrónico del tutor'"`
 	Observaciones          *string   `gorm:"default:null;comment:'Observaciones sobre el aspirante'"`
 	Obserficha             string    `gorm:"not null;comment:'Observaciones en ficha'"`
-	IdPficha               int       `gorm:"not null;comment:'ID de la preficha'"`
-	FechaFicha             time.Time `gorm:"not null;comment:'Fecha de la ficha'"`
-	MatriculaCeneval       string    `gorm:"not null;comment:'Matrícula del examen CENEVAL'"`
-	PassFicha              string    `gorm:"not null;comment:'Contraseña de la ficha'"`
-	CarFicha               int       `gorm:"not null;comment:'Carrera de la ficha'"`
-	Car2Ficha              int       `gorm:"not null;comment:'Segunda opción de carrera de la ficha'"`
-	NivelFi                int       `gorm:"not null;comment:'Nivel FI'"`
-	OpPor                  string    `gorm:"not null;comment:'OP POR'"`
-	Acta                   int       `gorm:"not null;comment:'Acta'"`
-	Curpp                  int       `gorm:"not null;comment:'CURPP'"`
-	Identi                 int       `gorm:"not null;comment:'Identificador'"`
-	Cer                    int       `gorm:"not null;comment:'CER'"`
-	Curpins                int       `gorm:"not null;comment:'CURPINS'"`
-	Certins                int       `gorm:"not null;comment:'CERTINS'"`
-	Actains                int       `gorm:"not null;comment:'ACTAINS'"`
-	Certmedicoins          int       `gorm:"not null;comment:'CERTMEDICOINS'"`
-	Compdomiins            int       `gorm:"not null;comment:'COMPDOMIINS'"`
-	Pagoins                int       `gorm:"not null;comment:'PAGOINS'"`
-	DesCermediins          *string   `gorm:"default:null;comment:'Des Cermediins'"`
-	DesCertins             *string   `gorm:"default:null;comment:'Des Certins'"`
-	DesActains             *string   `gorm:"default:null;comment:'Des Actains'"`
-	DesComdomiins          *string   `gorm:"default:null;comment:'Des Comdomiins'"`
-	Cartacomp              int       `gorm:"not null;comment:'Carta de compromiso'"`
-	DPagoins               *string   `gorm:"default:null;comment:'D Pagoins'"`
-	DCertins               *string   `gorm:"default:null;comment:'D Certins'"`
-	DCertmedicoins         *string   `gorm:"default:null;comment:'D Certmedicoins'"`
-	DActains               *string   `gorm:"default:null;comment:'D Actains'"`
-	DCompins               *string   `gorm:"default:null;comment:'D Compins'"`
-	DCurp                  *string   `gorm:"default:null;comment:'D Curp'"`
-	IdPreficha             int       `gorm:"not null;comment:'ID de la preficha'"`
-	Alumno                 Alumno    //`gorm:"foreignKey:Matricula"`
+	// IdPficha               int       `gorm:"not null;comment:'ID de la preficha'"`
+	FechaFicha       time.Time `gorm:"not null;comment:'Fecha de la ficha'"`
+	MatriculaCeneval string    `gorm:"not null;comment:'Matrícula del examen CENEVAL'"`
+	PassFicha        string    `gorm:"not null;comment:'Contraseña de la ficha'"`
+	CarFicha         int       `gorm:"not null;comment:'Carrera de la ficha'"`
+	Car2Ficha        int       `gorm:"not null;comment:'Segunda opción de carrera de la ficha'"`
+	NivelFi          int       `gorm:"not null;comment:'Nivel FI'"`
+	OpPor            string    `gorm:"not null;comment:'OP POR'"`
+	Acta             int       `gorm:"not null;comment:'Acta'"`
+	Curpp            int       `gorm:"not null;comment:'CURPP'"`
+	Identi           int       `gorm:"not null;comment:'Identificador'"`
+	Cer              int       `gorm:"not null;comment:'CER'"`
+	Curpins          int       `gorm:"not null;comment:'CURPINS'"`
+	Certins          int       `gorm:"not null;comment:'CERTINS'"`
+	Actains          int       `gorm:"not null;comment:'ACTAINS'"`
+	Certmedicoins    int       `gorm:"not null;comment:'CERTMEDICOINS'"`
+	Compdomiins      int       `gorm:"not null;comment:'COMPDOMIINS'"`
+	Pagoins          int       `gorm:"not null;comment:'PAGOINS'"`
+	DesCermediins    *string   `gorm:"default:null;comment:'Des Cermediins'"`
+	DesCertins       *string   `gorm:"default:null;comment:'Des Certins'"`
+	DesActains       *string   `gorm:"default:null;comment:'Des Actains'"`
+	DesComdomiins    *string   `gorm:"default:null;comment:'Des Comdomiins'"`
+	Cartacomp        int       `gorm:"not null;comment:'Carta de compromiso'"`
+	DPagoins         *string   `gorm:"default:null;comment:'D Pagoins'"`
+	DCertins         *string   `gorm:"default:null;comment:'D Certins'"`
+	DCertmedicoins   *string   `gorm:"default:null;comment:'D Certmedicoins'"`
+	DActains         *string   `gorm:"default:null;comment:'D Actains'"`
+	DCompins         *string   `gorm:"default:null;comment:'D Compins'"`
+	DCurp            *string   `gorm:"default:null;comment:'D Curp'"`
+	PrefichaID       uint      `gorm:"not null;comment:'ID de la preficha'"`
+	AspiranteID      uint
+	Alumno           Alumno //`gorm:"foreignKey:Matricula"`
 }

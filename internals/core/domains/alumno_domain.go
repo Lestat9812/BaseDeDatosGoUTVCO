@@ -34,6 +34,14 @@ type Alumno struct { //Usuarios de plataforma?
 	// Perfiles         []Perfil //Relación has many  //Necesita perfil?
 }
 
+type AlumnoSinNada struct {
+	ID        uint
+	Matricula string
+	Nombre    string
+	// CarreraID uint
+	// Carrera   domains.Carrera
+}
+
 type AlumnoGrupo struct {
 	gorm.Model
 	AlumnoID    int    `gorm:"primaryKey"`

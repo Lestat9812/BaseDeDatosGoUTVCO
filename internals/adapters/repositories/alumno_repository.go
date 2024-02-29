@@ -2,20 +2,11 @@ package repositories
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
-
-type AlumnoSinNada struct {
-	ID        uint
-	Matricula string
-	Password  string
-	// CarreraID uint
-	// Carrera   domains.Carrera
-}
 
 type AlumnoRepository struct {
 	db *gorm.DB
@@ -35,38 +26,54 @@ func (r *AlumnoRepository) SaveAlumno(alumno *domains.Alumno) error {
 	return nil
 }
 
-func (r *AlumnoRepository) AllAlumnos() ([]*domains.Alumno, error) {
-	var results []*domains.Alumno
-
-	if res := r.db.Preload(clause.Associations).
-		Find(&results); res.Error != nil {
-		return nil, res.Error
-	}
-
-	if len(results) == 0 {
-		return nil, errors.New("data not found")
-	} else {
-		return results, nil
-	}
-}
-
-func (r *AlumnoRepository) FindAlumnoById(id int) (*AlumnoSinNada, error) {
+func (r *AlumnoRepository) AllAlumnos() ([]*domains.AlumnoSinNada, error) {
 	// var alumno domains.Alumno
-	var al AlumnoSinNada
+	var al []*domains.AlumnoSinNada
 	// result := r.db.Preload(clause.Associations).Preload("Grupos.Carrera.Personal.Perfiles").First(&alumno)
-	result2 := r.db.Model(domains.Alumno{}).Select("id, matricula, password").Where("id=?", id).Scan(&al)
+	result2 := r.db.Model(domains.Alumno{}).Select("alumnos.id, alumnos.matricula, estudiantes.nombre").Joins("left join estudiantes on estudiantes.id = alumnos.estudiante_id").Scan(&al)
 
-	fmt.Print(al)
+	// fmt.Print(al)
 	// if result.RowsAffected == 0 {
 	// 	return &AlumnoSinNada{}, errors.New("data not found")
 	// 	// return &domains.Alumno{}, errors.New("data not found")
 	// }
 	if result2.RowsAffected == 0 {
-		return &AlumnoSinNada{}, errors.New("data not found")
+		return nil, errors.New("data not found")
 		// return &domains.Alumno{}, errors.New("data not found")
 	}
-	return &al, nil
+	return al, nil
+	// var results []*domains.Alumno
+
+	// if res := r.db.Preload(clause.Associations).
+	// 	Find(&results); res.Error != nil {
+	// 	return nil, res.Error
+	// }
+
+	// if len(results) == 0 {
+	// 	return nil, errors.New("data not found")
+	// } else {
+	// 	return results, nil
+	// }
 }
+
+func (r *AlumnoRepository) FindAlumnoById(id int) (*domains.Alumno, error) {
+	var alumno domains.Alumno
+	// var al AlumnoSinNada
+	result := r.db.Preload(clause.Associations).Preload("Grupos.Carrera.Personal.Perfiles").First(&alumno)
+	// result2 := r.db.Model(domains.Alumno{}).Select("id, matricula, password").Where("id=?", id).Scan(&al)
+
+	// fmt.Print(al)
+	if result.RowsAffected == 0 {
+		// 	return &AlumnoSinNada{}, errors.New("data not found")
+		return &domains.Alumno{}, errors.New("data not found")
+	}
+	// if result2.RowsAffected == 0 {
+	// return &AlumnoSinNada{}, errors.New("data not found")
+	// return &domains.Alumno{}, errors.New("data not found")
+	// }
+	return &alumno, nil
+}
+
 func (r *AlumnoRepository) UpdateAlumno(alumno *domains.Alumno) error {
 	result := r.db.Model(&domains.Alumno{}).Where("id = ?", alumno.ID).Updates(alumno)
 	if result.Error != nil {

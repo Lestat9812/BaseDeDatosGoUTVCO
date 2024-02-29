@@ -1,7 +1,6 @@
 package services
 
 import (
-	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/adapters/repositories"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/ports"
 )
@@ -24,7 +23,7 @@ func (s *AlumnoService) GuardarAlumno(alumno *domains.Alumno) error {
 	return nil
 }
 
-func (s *AlumnoService) ObtenerTodosAlumnos() ([]*domains.Alumno, error) {
+func (s *AlumnoService) ObtenerTodosAlumnos() ([]*domains.AlumnoSinNada, error) {
 	res, err := s.alumnoRepository.AllAlumnos()
 	if err != nil {
 		return nil, err
@@ -32,7 +31,7 @@ func (s *AlumnoService) ObtenerTodosAlumnos() ([]*domains.Alumno, error) {
 	return res, nil
 }
 
-func (s *AlumnoService) ObtenerUnAlumno(id int) (*repositories.AlumnoSinNada, error) {
+func (s *AlumnoService) ObtenerUnAlumno(id int) (*domains.Alumno, error) {
 	res, err := s.alumnoRepository.FindAlumnoById(id)
 	if err != nil {
 		return nil, err
