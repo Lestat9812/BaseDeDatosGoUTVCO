@@ -67,4 +67,5 @@ type Preficha struct {
 	ObsCURPP          string    `gorm:"not null"`
 	ObsIdenti         string    `gorm:"not null"`
 	Aspirante         Aspirante `gorm:"not null"`
+	Estudiante        Estudiante
 }

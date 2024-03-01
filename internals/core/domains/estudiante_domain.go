@@ -81,7 +81,7 @@ type Estudiante struct {
 	DActains         *string   `gorm:"default:null;comment:'D Actains'"`
 	DCompins         *string   `gorm:"default:null;comment:'D Compins'"`
 	DCurp            *string   `gorm:"default:null;comment:'D Curp'"`
-	PrefichaID       uint      `gorm:"not null;comment:'ID de la preficha'"`
+	PrefichaID       uint      //`gorm:"not null;comment:'ID de la preficha'"`
 	AspiranteID      uint
 	Alumno           Alumno //`gorm:"foreignKey:Matricula"`
 }
