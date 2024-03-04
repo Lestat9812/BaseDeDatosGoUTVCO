@@ -2,17 +2,15 @@ package middlewares
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-
-	"strings"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 type Usuario struct {
@@ -49,11 +47,12 @@ type CatModulos struct {
 	Activo      int    `json:"activo"`
 }
 
-type Loginxd struct {
+type CurrentUser struct {
 	ID           float64
 	Usuario      string `json:"usuario"`
 	Password     string `json:"password"`
 	PasswordHash string
+	Valido       bool
 }
 
 type UserStruct struct {
@@ -175,6 +174,7 @@ func Verificar(c *fiber.Ctx) error {
 	return c.Status(200).JSON(&fiber.Map{
 		"id":      token.ID,
 		"usuario": token.Usuario,
+		"valido":  token.Valido,
 	})
 }
 
@@ -215,16 +215,21 @@ func Refrescar(c *fiber.Ctx) error {
 			"message": "Token invalido",
 		})
 	}
-
-	res, err := RefreshToken(tokenString)
-	if err != nil {
+	if token.Valido {
+		res, err := RefreshToken(tokenString)
+		if err != nil {
+			return c.Status(404).JSON(&fiber.Map{
+				"message": err.Error(),
+			})
+		}
+		return c.Status(200).JSON(&fiber.Map{
+			"message": res,
+		})
+	} else {
 		return c.Status(404).JSON(&fiber.Map{
-			"message": err.Error(),
+			"message": "usuario o contraseña incorrectos",
 		})
 	}
-	return c.Status(200).JSON(&fiber.Map{
-		"message": res,
-	})
 }
 
 func GenerateTokenAlumno(jwtParams *domains.Alumno) (string, error) {
@@ -279,7 +284,7 @@ func GenerateTokenMaestro(jwtParams *domains.Personal) (string, []domains.Perfil
 	return tokenString, login.Perfiles, nil
 }
 
-func ValidateToken(tokenString string) (*Loginxd, error) {
+func ValidateToken(tokenString string) (*CurrentUser, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method")
@@ -299,36 +304,71 @@ func ValidateToken(tokenString string) (*Loginxd, error) {
 
 		var login *domains.Alumno
 		var login2 *domains.Personal
-		var myFlag bool = false
-		if res := db.Where("matricula = ?", userId).First(&login); res.Error != nil {
-			myFlag = true
-			if !myFlag {
-				return nil, res.Error
+		var valido bool = false
+		// var myFlag bool = false
+		// var myFlag2 bool = false
+		// if res := db.Where("matricula = ? AND password = ?", userId, passwordHash).First(&login); res.Error != nil {
+		// 	myFlag = true
+		// 	login = nil
+		// 	if !myFlag {
+		// 		return nil, res.Error
+		// 	}
+		//  }
+		res := db.Where("matricula = ? AND password = ?", userId, passwordHash).First(&login)
+		if res.RowsAffected == 0 {
+			// myFlag = true
+			login = nil
+			res2 := db.Where("user=? AND password = ?", userId, passwordHash).First(&login2)
+			if res2.RowsAffected == 0 {
+				login2 = nil
 			}
-		} else if myFlag {
-			if res2 := db.Where("user=?", userId).First(&login2); res2.Error != nil {
-				fmt.Print("Hola2")
-				return nil, res2.Error
-			}
-
+			// if !myFlag {
+			// 	return nil, res.Error
+			// }
 		}
 
-		if login.Password != passwordHash {
-			myFlag = true
-			if !myFlag {
-				return nil, fmt.Errorf("token inválido")
+		if login != nil {
+			if login.Password != passwordHash {
+				return nil, fmt.Errorf("usuario o contraseña inválido")
+			} else {
+				valido = true
+				return &CurrentUser{Usuario: userId, ID: Id, Valido: valido}, nil
 			}
-		} else if myFlag {
+		} else if login2 != nil {
 			if login2.Password != passwordHash {
-				return nil, fmt.Errorf("token inválido")
+				return nil, fmt.Errorf("usuario o contraseña inválido")
+			} else {
+				valido = true
+				return &CurrentUser{Usuario: userId, ID: Id, Valido: valido}, nil
 			}
 
 		}
 
-		return &Loginxd{Usuario: userId, ID: Id}, nil
+		// if myFlag {
+		// 	if res2 := db.Where("user=? AND password = ?", userId, passwordHash).First(&login2); res2.Error != nil {
+		// 		fmt.Print("Hola2")
+		// 		login2=nil
+		// 		return nil, res2.Error
+		// 	}
+
+		// }
+
+		// if login.Password != passwordHash {
+		// 	myFlag2 = true
+		// 	if !myFlag2 {
+		// 		return nil, fmt.Errorf("token inválido")
+		// 	}
+		// } else if myFlag2 {
+		// 	if login2.Password != passwordHash {
+		// 		return nil, fmt.Errorf("token inválido")
+		// 	}
+
+		// }
+
 	} else {
 		return nil, err
 	}
+	return nil, err
 }
 
 func RefreshToken(tokenString string) (string, error) {
@@ -352,6 +392,7 @@ func RefreshToken(tokenString string) (string, error) {
 		var login *domains.Alumno
 		var login2 *domains.Personal
 		var myFlag bool = false
+		var myFlag2 bool = false
 		if res := db.Where("matricula = ?", userId).First(&login); res.Error != nil {
 			myFlag = true
 			if !myFlag {
@@ -362,15 +403,19 @@ func RefreshToken(tokenString string) (string, error) {
 				fmt.Print("Hola2")
 				return "", res2.Error
 			}
-
+		}
+		if login != nil {
+			fmt.Print(login.Matricula)
+		} else {
+			fmt.Print(login2.User)
 		}
 
 		if login.Password != passwordHash {
-			myFlag = true
-			if !myFlag {
+			myFlag2 = true
+			if !myFlag2 {
 				return "", fmt.Errorf("token inválido")
 			}
-		} else if myFlag {
+		} else if myFlag2 {
 			if login2.Password != passwordHash {
 				return "", fmt.Errorf("token inválido")
 			}
