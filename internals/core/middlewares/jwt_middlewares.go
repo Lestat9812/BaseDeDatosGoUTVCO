@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -159,6 +160,11 @@ func GenerarLogMaestro(c *fiber.Ctx) error {
 
 func Verificar(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return c.Status(404).JSON(&fiber.Map{
+			"message": "Token invalido",
+		})
+	}
 	tokenString := strings.Split(authHeader, " ")[1]
 	token, err := ValidateToken(tokenString)
 	if err != nil {
@@ -166,6 +172,7 @@ func Verificar(c *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 	}
+
 	if token == nil {
 		return c.Status(404).JSON(&fiber.Map{
 			"message": "Token invalido",
@@ -203,9 +210,15 @@ func Authorizar(c *fiber.Ctx) error {
 
 func Refrescar(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return c.Status(404).JSON(&fiber.Map{
+			"message": "Token invalido",
+		})
+	}
 	tokenString := strings.Split(authHeader, " ")[1]
 	token, err := ValidateToken(tokenString)
 	if err != nil {
+
 		return c.Status(404).JSON(&fiber.Map{
 			"message": err.Error(),
 		})
@@ -250,7 +263,7 @@ func GenerateTokenAlumno(jwtParams *domains.Alumno) (string, error) {
 	claims["passwordHash"] = jwtParams.PasswordHash
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
-	tokenString, err := token.SignedString([]byte("llave-secreta-xd"))
+	tokenString, err := token.SignedString([]byte("secret.code"))
 	if err != nil {
 		return "", err
 	}
@@ -276,7 +289,7 @@ func GenerateTokenMaestro(jwtParams *domains.Personal) (string, []domains.Perfil
 	claims["passwordHash"] = jwtParams.PasswordHash
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
-	tokenString, err := token.SignedString([]byte("llave-secreta-xd"))
+	tokenString, err := token.SignedString([]byte("secret.code"))
 	if err != nil {
 		return "", nil, err
 	}
@@ -289,7 +302,7 @@ func ValidateToken(tokenString string) (*CurrentUser, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method")
 		}
-		return []byte("llave-secreta-xd"), nil
+		return []byte("secret.code"), nil
 	})
 
 	if err != nil {
@@ -305,65 +318,32 @@ func ValidateToken(tokenString string) (*CurrentUser, error) {
 		var login *domains.Alumno
 		var login2 *domains.Personal
 		var valido bool = false
-		// var myFlag bool = false
-		// var myFlag2 bool = false
-		// if res := db.Where("matricula = ? AND password = ?", userId, passwordHash).First(&login); res.Error != nil {
-		// 	myFlag = true
-		// 	login = nil
-		// 	if !myFlag {
-		// 		return nil, res.Error
-		// 	}
-		//  }
-		res := db.Where("matricula = ? AND password = ?", userId, passwordHash).First(&login)
+
+		res := db.Where("matricula = ? AND password = ? AND id = ?", userId, passwordHash, Id).First(&login)
 		if res.RowsAffected == 0 {
-			// myFlag = true
 			login = nil
-			res2 := db.Where("user=? AND password = ?", userId, passwordHash).First(&login2)
+			res2 := db.Where("user=? AND password = ? AND id = ?", userId, passwordHash, Id).First(&login2)
 			if res2.RowsAffected == 0 {
 				login2 = nil
+				return nil, errors.New("usuario o contraseña inválidos")
 			}
-			// if !myFlag {
-			// 	return nil, res.Error
-			// }
 		}
 
 		if login != nil {
 			if login.Password != passwordHash {
-				return nil, fmt.Errorf("usuario o contraseña inválido")
+				return nil, fmt.Errorf("usuario o contraseña inválidos")
 			} else {
 				valido = true
 				return &CurrentUser{Usuario: userId, ID: Id, Valido: valido}, nil
 			}
 		} else if login2 != nil {
 			if login2.Password != passwordHash {
-				return nil, fmt.Errorf("usuario o contraseña inválido")
+				return nil, fmt.Errorf("usuario o contraseña inválidos")
 			} else {
 				valido = true
 				return &CurrentUser{Usuario: userId, ID: Id, Valido: valido}, nil
 			}
-
 		}
-
-		// if myFlag {
-		// 	if res2 := db.Where("user=? AND password = ?", userId, passwordHash).First(&login2); res2.Error != nil {
-		// 		fmt.Print("Hola2")
-		// 		login2=nil
-		// 		return nil, res2.Error
-		// 	}
-
-		// }
-
-		// if login.Password != passwordHash {
-		// 	myFlag2 = true
-		// 	if !myFlag2 {
-		// 		return nil, fmt.Errorf("token inválido")
-		// 	}
-		// } else if myFlag2 {
-		// 	if login2.Password != passwordHash {
-		// 		return nil, fmt.Errorf("token inválido")
-		// 	}
-
-		// }
 
 	} else {
 		return nil, err
@@ -376,7 +356,7 @@ func RefreshToken(tokenString string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method")
 		}
-		return []byte("llave-secreta-xd"), nil
+		return []byte("secret.code"), nil
 	})
 
 	if err != nil {
@@ -400,7 +380,6 @@ func RefreshToken(tokenString string) (string, error) {
 			}
 		} else if myFlag {
 			if res2 := db.Where("user=?", userId).First(&login2); res2.Error != nil {
-				fmt.Print("Hola2")
 				return "", res2.Error
 			}
 		}
@@ -430,7 +409,7 @@ func RefreshToken(tokenString string) (string, error) {
 		claims["passwordHash"] = passwordHash
 		claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
-		tokenString, err := token.SignedString([]byte("llave-secreta-xd"))
+		tokenString, err := token.SignedString([]byte("secret.code"))
 		if err != nil {
 			return "", err
 		}
