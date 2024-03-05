@@ -12,7 +12,7 @@ type Periodo struct {
 	FinAdmision    *time.Time `gorm:"column:fin_admision"`
 	FechaInicio    time.Time  `gorm:"column:fecha_inicio"`
 	FechaFin       time.Time  `gorm:"column:fecha_fin"`
-	InicioReins    *time.Time `gorm:"column:inicio_reins"`
+	InicioReins    *time.Time `gorm:"column:inicio_reins;comment:saber si el modulo de inscripcion esta activo para este modulo"`
 	FinReins       *time.Time `gorm:"column:fin_reins"`
 	ExamenProf     int        `gorm:"column:examenprof"`
 	Titulacion     int        `gorm:"column:titulacion"`
