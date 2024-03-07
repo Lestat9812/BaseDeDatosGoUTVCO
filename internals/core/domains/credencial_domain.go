@@ -2,6 +2,10 @@ package domains
 
 import "gorm.io/gorm"
 
+func (Credencial) TableName() string {
+	return "credenciales"
+}
+
 type Credencial struct {
 	gorm.Model
 	AlumnoID       uint    `gorm:"not null"`

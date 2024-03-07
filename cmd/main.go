@@ -53,8 +53,15 @@ func main() {
 	db.SetupJoinTable(&domains.Alumno{}, "Grupos", &domains.AlumnoGrupo{})
 	db.SetupJoinTable(&domains.Personal{}, "Perfiles", &domains.UsuariosPerfiles{})
 	db.AutoMigrate(domains.Preficha{}, domains.Aspirante{}, domains.Materia{}, domains.Perfil{},
-		domains.Estudiante{}, domains.Alumno{}, domains.Grupo{}, domains.GrupoMateria{},
-		domains.Calificacion{}, domains.Personal{})
+		domains.CausaBaja{}, domains.Estudiante{}, domains.Alumno{}, domains.Grupo{},
+		domains.GrupoMateria{}, domains.Calificacion{}, domains.Personal{}, domains.Autoevaluacion{},
+		domains.Bachillerato{}, domains.BajaAlumno{}, domains.Baucher{}, domains.BecaAlumno{},
+		domains.Cambio{}, domains.ClasifPreg{}, domains.Comprobante{}, domains.Constancia{},
+		domains.Credencial{}, domains.Curriculum{}, domains.DetalleAutoevaluacion{},
+		domains.DetalleEvaluacion{}, domains.DetalleEvaluacionDirector{}, domains.DocEstudiante{},
+		domains.DocExaProf{}, domains.Documento{}, domains.Estadia{}, domains.EstadoRegistro{},
+		domains.Evaluacion{}, domains.EvaluacionDirector{}, domains.PagosFicha{},
+	)
 
 	middlewares.Init(db)
 

@@ -84,4 +84,7 @@ type Estudiante struct {
 	PrefichaID       uint      //`gorm:"not null;comment:'ID de la preficha'"`
 	AspiranteID      uint
 	Alumno           Alumno //`gorm:"foreignKey:Matricula"`
+	Baucher          Baucher
+	DocEstudiante    DocEstudiante
+	PagosFicha       PagosFicha
 }

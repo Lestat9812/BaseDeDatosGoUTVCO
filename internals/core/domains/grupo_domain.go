@@ -16,6 +16,8 @@ type Grupo struct {
 	PersonalID    uint `gorm:"not null"` //TUTOR?
 	Personal      Personal
 	GrupoMaterias []GrupoMateria
+	BajaAlumno    BajaAlumno
+	Comprobante   Comprobante
 }
 
 func (GrupoMateria) TableName() string {
@@ -37,4 +39,6 @@ type GrupoMateria struct {
 	Acta2          int
 	Acta3          int
 	Calificaciones []Calificacion
+	Estadia        Estadia
+	Evaluacion     Evaluacion
 }

@@ -16,7 +16,7 @@ type BajaAlumno struct {
 	Fecha          string  `gorm:"not null"`
 	Tipo           string  `gorm:"not null"`
 	TiempoAusencia *int    `gorm:"default:null;comment:'tiempo en cuatrimestres'"`
-	CausaID        uint    `gorm:"not null"`
+	CausaBajaID    uint    `gorm:"not null"`
 	Otra           *string `gorm:"type:text;default:null"`
 	Observacion    *string `gorm:"type:text;default:null"`
 }

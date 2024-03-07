@@ -28,9 +28,20 @@ type Alumno struct { //Usuarios de plataforma?
 	VisitaClases     int        `gorm:"not null"`
 	EstudianteID     uint       //Relación tiene uno
 	CarreraID        uint
+	Grupos           []Grupo `gorm:"many2many:alumnos_grupos;"` //Relación many to many
+	Calificaciones   []Calificacion
+	BajaAlumno       BajaAlumno
+	Baucher          Baucher
+	BecaAlumno       BecaAlumno
+	Comprobante      Comprobante
+	Constancia       Constancia
+	Credencial       Credencial
+	DocExaProf       DocExaProf
+	Documento        Documento
+	Estadia          Estadia
+	Evaluacion       Evaluacion
+
 	// Carrera          Carrera //Relación pertenece a
-	Grupos         []Grupo `gorm:"many2many:alumnos_grupos;"` //Relación many to many
-	Calificaciones []Calificacion
 	// Perfiles         []Perfil //Relación has many  //Necesita perfil?
 }
 

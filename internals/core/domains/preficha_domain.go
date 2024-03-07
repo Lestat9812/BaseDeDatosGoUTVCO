@@ -68,4 +68,5 @@ type Preficha struct {
 	ObsIdenti         string    `gorm:"not null"`
 	Aspirante         Aspirante `gorm:"not null"`
 	Estudiante        Estudiante
+	PagosFicha        PagosFicha
 }

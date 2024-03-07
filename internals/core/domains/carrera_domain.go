@@ -20,6 +20,7 @@ type Carrera struct {
 	Utcampus    Utcampus
 	PersonalID  uint
 	Personal    Personal //Director
-	//DirectorID  int
-	// Director Director   //no existe
+	BajaAlumno  BajaAlumno
+	Baucher     Baucher
+	Estadia     Estadia
 }
