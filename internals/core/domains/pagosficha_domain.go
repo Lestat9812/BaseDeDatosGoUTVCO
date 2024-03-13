@@ -2,6 +2,10 @@ package domains
 
 import "gorm.io/gorm"
 
+func (PagosFicha) TableName() string {
+	return "pagosficha"
+}
+
 type PagosFicha struct {
 	gorm.Model
 	PrefichaID    uint   `gorm:"not null"`

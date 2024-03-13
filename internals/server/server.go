@@ -43,49 +43,53 @@ func (s *Server) Initizalize() *fiber.App {
 		AllowMethods: "*",
 	}))
 
-	alumno := app.Group("/alumno")
+	// app.Use(middlewares.Autorizar)  no funciona porque bloquea el login también
+
+	alumno := app.Group("/alumno", middlewares.Autorizar)
 	alumno.Post("/", s.alumnoHandler.NuevoAlumno)
 	alumno.Get("/todos", s.alumnoHandler.TodosAlumnos)
 	alumno.Get("/:id", s.alumnoHandler.UnAlumno)
+	alumno.Get("/grupo/:id", s.alumnoHandler.UnAlumnoGrupo)
+	alumno.Get("/calificaciones/:id", s.alumnoHandler.UnAlumnoCalificaciones)
 	alumno.Put("/:id", s.alumnoHandler.EditarAlumno)
 	alumno.Delete("/:id", s.alumnoHandler.BorrarAlumno)
 
-	personal := app.Group("/personal")
+	personal := app.Group("/personal", middlewares.Autorizar)
 	personal.Post("/", s.personalHandler.NuevoPersonal)
 	personal.Get("/todos", s.personalHandler.TodosPersonal)
 	personal.Get("/:id", s.personalHandler.UnPersonal)
 	personal.Put("/:id", s.personalHandler.EditarPersonal)
 	personal.Delete("/:id", s.personalHandler.BorrarPersonal)
 
-	utcampus := app.Group("/utcampus")
+	utcampus := app.Group("/utcampus", middlewares.Autorizar)
 	utcampus.Post("/", s.utcampusHandler.NuevoUtcampus)
 	utcampus.Get("/todos", s.utcampusHandler.TodosUtcampus)
 	utcampus.Get("/:id", s.utcampusHandler.UnUtcampus)
 	utcampus.Put("/:id", s.utcampusHandler.EditarUtcampus)
 	utcampus.Delete("/:id", s.utcampusHandler.BorrarUtcampus)
 
-	periodo := app.Group("/periodo")
+	periodo := app.Group("/periodo", middlewares.Autorizar)
 	periodo.Post("/", s.periodoHandler.NuevoPeriodo)
 	periodo.Get("/todos", s.periodoHandler.TodosPeriodos)
 	periodo.Get("/:id", s.periodoHandler.UnPeriodo)
 	periodo.Put("/:id", s.periodoHandler.EditarPeriodo)
 	periodo.Delete("/:id", s.periodoHandler.BorrarPeriodo)
 
-	grupo := app.Group("/grupo")
+	grupo := app.Group("/grupo", middlewares.Autorizar)
 	grupo.Post("/", s.grupoHandler.NuevoGrupo)
 	grupo.Get("/todos", s.grupoHandler.TodosGrupos)
 	grupo.Get("/:id", s.grupoHandler.UnGrupo)
 	grupo.Put("/:id", s.grupoHandler.EditarGrupo)
 	grupo.Delete("/:id", s.grupoHandler.BorrarGrupo)
 
-	estudiante := app.Group("/estudiante")
+	estudiante := app.Group("/estudiante", middlewares.Autorizar)
 	estudiante.Post("/", s.estudianteHandler.NuevoEstudiante)
 	estudiante.Get("/todos", s.estudianteHandler.TodosEstudiantes)
 	estudiante.Get("/:id", s.estudianteHandler.UnEstudiante)
 	estudiante.Put("/:id", s.estudianteHandler.EditarEstudiante)
 	estudiante.Delete("/:id", s.estudianteHandler.BorrarEstudiante)
 
-	carrera := app.Group("/carrera")
+	carrera := app.Group("/carrera", middlewares.Autorizar)
 	carrera.Post("/", s.carreraHandler.NuevaCarrera)
 	carrera.Get("/todas", s.carreraHandler.TodasCarreras)
 	carrera.Get("/:id", s.carreraHandler.UnaCarrera)
@@ -103,8 +107,9 @@ func (s *Server) Initizalize() *fiber.App {
 	app.Post("/generateMa", middlewares.GenerarLogMaestro)
 	app.Get("/validate", middlewares.Verificar)
 	app.Post("/refreshToken", middlewares.Refrescar)
-	app.Get("/", middlewares.Authorizar, func(c *fiber.Ctx) error {
-		return c.SendString("Bienvenido, Servicios Escolares UTVCO 👋!")
-	})
+	// app.Get("/", middlewares.Authorizar, s.alumnoHandler.TodosAlumnos)
+	// func(c *fiber.Ctx) error {
+	// 	return c.SendString("Bienvenido, Servicios Escolares UTVCO 👋!")
+	// })
 	return app
 }

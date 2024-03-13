@@ -2,6 +2,10 @@ package domains
 
 import "gorm.io/gorm"
 
+func (Preficha) TableName() string {
+	return "preficha"
+}
+
 type Preficha struct {
 	gorm.Model
 	Nombre                 string   `gorm:"not null;comment:'nomnre del aspirante'"`

@@ -10,5 +10,7 @@ func (EstadoRegistro) TableName() string {
 
 type EstadoRegistro struct {
 	gorm.Model
-	EstadoD string `gorm:"not null"`
+	EstadoD               string `gorm:"not null"`
+	Registro              Registro
+	ReinscripcionTemporal ReinscripcionTemporal
 }

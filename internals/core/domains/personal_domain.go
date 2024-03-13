@@ -27,6 +27,10 @@ type Personal struct {
 	Documento          Documento
 	Evaluacion         Evaluacion
 	EvaluacionDirector EvaluacionDirector
+	Recursamiento      Recursamiento
+	Registro           Registro
+	// RegVistos          RegVistos
+
 	// GrupoMateria []GrupoMateria //Así no era
 	// PerfilID  uint   `gorm:"column:id_perfil;index"` //Se pueden más de uno
 }

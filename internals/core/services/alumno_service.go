@@ -38,6 +38,20 @@ func (s *AlumnoService) ObtenerUnAlumno(id int) (*domains.Alumno, error) {
 	}
 	return res, nil
 }
+func (s *AlumnoService) ObtenerUnAlumnoGrupo(id int) (*domains.Alumno, error) {
+	res, err := s.alumnoRepository.FindAlumnoGrupoById(id)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+func (s *AlumnoService) ObtenerUnAlumnoCalificaciones(id int) (*domains.Alumno, error) {
+	res, err := s.alumnoRepository.FindAlumnoCalificacionesById(id)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
 
 func (s *AlumnoService) ActualizarAlumno(alumno *domains.Alumno) error {
 	err := s.alumnoRepository.UpdateAlumno(alumno)

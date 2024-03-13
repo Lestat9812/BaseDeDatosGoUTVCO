@@ -185,11 +185,11 @@ func Verificar(c *fiber.Ctx) error {
 	})
 }
 
-func Authorizar(c *fiber.Ctx) error {
+func Autorizar(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
 	if authHeader == "" {
 		return c.Status(404).JSON(&fiber.Map{
-			"message": "Token invalido",
+			"message": "Token inválido",
 		})
 	}
 	tokenString := strings.Split(authHeader, " ")[1]
@@ -201,18 +201,21 @@ func Authorizar(c *fiber.Ctx) error {
 	}
 	if token == nil {
 		return c.Status(404).JSON(&fiber.Map{
-			"message": "Token invalido",
+			"message": "Token inválido",
 		})
 	}
 
 	return c.Next()
+	// c.Status(404).JSON(&fiber.Map{
+	// 	"message": "no next",
+	// })
 }
 
 func Refrescar(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
 	if authHeader == "" {
 		return c.Status(404).JSON(&fiber.Map{
-			"message": "Token invalido",
+			"message": "Token inválido",
 		})
 	}
 	tokenString := strings.Split(authHeader, " ")[1]
@@ -225,7 +228,7 @@ func Refrescar(c *fiber.Ctx) error {
 	}
 	if token == nil {
 		return c.Status(404).JSON(&fiber.Map{
-			"message": "Token invalido",
+			"message": "Token inválido",
 		})
 	}
 	if token.Valido {

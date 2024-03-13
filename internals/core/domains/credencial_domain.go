@@ -3,7 +3,7 @@ package domains
 import "gorm.io/gorm"
 
 func (Credencial) TableName() string {
-	return "credenciales"
+	return "credencial"
 }
 
 type Credencial struct {

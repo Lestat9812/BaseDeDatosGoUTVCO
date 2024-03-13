@@ -65,6 +65,44 @@ func (h *AlumnoHandler) UnAlumno(c *fiber.Ctx) error {
 	})
 }
 
+func (h *AlumnoHandler) UnAlumnoGrupo(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(400).JSON(&domains.ErrorResponse{
+			Message: "Invalid id",
+		})
+	}
+	res, err := h.alumnoService.ObtenerUnAlumnoGrupo(id)
+	if err != nil {
+		return c.Status(404).JSON(&domains.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+
+	return c.Status(200).JSON(&fiber.Map{
+		"data": &res,
+	})
+}
+
+func (h *AlumnoHandler) UnAlumnoCalificaciones(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(400).JSON(&domains.ErrorResponse{
+			Message: "Invalid id",
+		})
+	}
+	res, err := h.alumnoService.ObtenerUnAlumnoCalificaciones(id)
+	if err != nil {
+		return c.Status(404).JSON(&domains.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+
+	return c.Status(200).JSON(&fiber.Map{
+		"data": &res,
+	})
+}
+
 func (h *AlumnoHandler) EditarAlumno(c *fiber.Ctx) error {
 	alumno := new(domains.Alumno)
 	id, err := c.ParamsInt("id")

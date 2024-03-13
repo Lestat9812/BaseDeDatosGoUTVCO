@@ -18,6 +18,7 @@ type Grupo struct {
 	GrupoMaterias []GrupoMateria
 	BajaAlumno    BajaAlumno
 	Comprobante   Comprobante
+	Registro      Registro
 }
 
 func (GrupoMateria) TableName() string {
@@ -41,4 +42,5 @@ type GrupoMateria struct {
 	Calificaciones []Calificacion
 	Estadia        Estadia
 	Evaluacion     Evaluacion
+	Registro       Registro
 }

@@ -9,4 +9,5 @@ func (ClasifPreg) TableName() string {
 type ClasifPreg struct {
 	gorm.Model
 	Clasificacion string `gorm:"not null"`
+	Question      Question
 }

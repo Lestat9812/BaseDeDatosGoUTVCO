@@ -14,4 +14,6 @@ type Calificacion struct {
 	Segundo        *float64 `gorm:"default:null"`
 	Tercero        *float64 `gorm:"default:null"`
 	Cambios        []Cambio
+	Extraordinario Extraordinario
+	Recursamiento  Recursamiento
 }

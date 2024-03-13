@@ -3,7 +3,7 @@ package domains
 import "gorm.io/gorm"
 
 func (Autoevaluacion) TableName() string {
-	return "autoevaluaciones"
+	return "autoevaluacion"
 }
 
 type Autoevaluacion struct {

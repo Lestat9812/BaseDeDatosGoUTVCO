@@ -6,6 +6,10 @@ import (
 	"gorm.io/gorm"
 )
 
+func (Constancia) TableName() string {
+	return "constancia"
+}
+
 type Constancia struct {
 	gorm.Model
 	AlumnoID          uint      `gorm:"not null"`

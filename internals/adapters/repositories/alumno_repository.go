@@ -28,7 +28,7 @@ func (r *AlumnoRepository) SaveAlumno(alumno *domains.Alumno) error {
 
 func (r *AlumnoRepository) AllAlumnos() ([]*domains.AlumnoSinNada, error) {
 	var al []*domains.AlumnoSinNada
-	result2 := r.db.Model(domains.Alumno{}).Select("alumnos.id, alumnos.matricula, prefichas.nombre").Joins("left join estudiantes on estudiantes.id = alumnos.estudiante_id").Joins("left join prefichas on prefichas.id=estudiantes.preficha_id").Scan(&al)
+	result2 := r.db.Model(domains.Alumno{}).Select("alumnos.id, alumnos.matricula, preficha.nombre, preficha.apellido_p, preficha.apellido_m").Joins("left join estudiantes on estudiantes.id = alumnos.estudiante_id").Joins("left join preficha on preficha.id=estudiantes.preficha_id").Scan(&al)
 
 	if result2.RowsAffected == 0 {
 		return nil, errors.New("data not found")
@@ -40,6 +40,26 @@ func (r *AlumnoRepository) FindAlumnoById(id int) (*domains.Alumno, error) {
 	var alumno domains.Alumno
 	result := r.db.Preload(clause.Associations).First(&alumno)
 	// result := r.db.Preload(clause.Associations).Preload("Grupos.Carrera.Personal.Perfiles").First(&alumno)
+
+	if result.RowsAffected == 0 {
+		return &domains.Alumno{}, errors.New("data not found")
+	}
+	return &alumno, nil
+}
+
+func (r *AlumnoRepository) FindAlumnoGrupoById(id int) (*domains.Alumno, error) {
+	var alumno domains.Alumno
+	result := r.db.Preload("Grupos").First(&alumno)
+
+	if result.RowsAffected == 0 {
+		return &domains.Alumno{}, errors.New("data not found")
+	}
+	return &alumno, nil
+}
+
+func (r *AlumnoRepository) FindAlumnoCalificacionesById(id int) (*domains.Alumno, error) {
+	var alumno domains.Alumno
+	result := r.db.Preload("Calificaciones").First(&alumno)
 
 	if result.RowsAffected == 0 {
 		return &domains.Alumno{}, errors.New("data not found")

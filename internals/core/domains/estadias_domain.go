@@ -2,6 +2,10 @@ package domains
 
 import "gorm.io/gorm"
 
+func (Estadia) TableName() string {
+	return "estadias"
+}
+
 type Estadia struct {
 	gorm.Model
 	GrupoMateriaID    uint     `gorm:"not null"`
