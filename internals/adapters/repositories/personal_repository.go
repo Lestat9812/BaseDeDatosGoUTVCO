@@ -4,7 +4,9 @@ import (
 	"errors"
 
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type PersonalRepository struct {
@@ -18,6 +20,12 @@ func NewPersonalRepository(storage *gorm.DB) *PersonalRepository {
 }
 
 func (r *PersonalRepository) SavePersonal(personal *domains.Personal) error {
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(personal.Password), 10)
+	if err != nil {
+		return errors.New(err.Error())
+	} else {
+		personal.Password = string(passwordHash)
+	}
 	result := r.db.Create(&personal)
 	if result.Error != nil {
 		return result.Error
@@ -28,7 +36,7 @@ func (r *PersonalRepository) SavePersonal(personal *domains.Personal) error {
 func (r *PersonalRepository) AllPersonal() ([]*domains.Personal, error) {
 	var results []*domains.Personal
 
-	if res := r.db.
+	if res := r.db.Preload(clause.Associations).
 		Find(&results); res.Error != nil {
 		return nil, res.Error
 	}

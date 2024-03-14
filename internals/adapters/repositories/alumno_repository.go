@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -19,6 +20,12 @@ func NewAlumnoRepository(storage *gorm.DB) *AlumnoRepository {
 }
 
 func (r *AlumnoRepository) SaveAlumno(alumno *domains.Alumno) error {
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(alumno.Password), 10)
+	if err != nil {
+		return errors.New(err.Error())
+	} else {
+		alumno.Password = string(passwordHash)
+	}
 	result := r.db.Create(&alumno)
 	if result.Error != nil {
 		return result.Error
