@@ -55,6 +55,7 @@ type AlumnoSinNada struct {
 	Nombre    string
 	ApellidoP string
 	ApellidoM string
+	CarreraID int
 	// CarreraID uint
 	// Carrera   domains.Carrera
 }

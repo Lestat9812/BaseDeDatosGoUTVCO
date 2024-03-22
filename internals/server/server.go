@@ -16,12 +16,14 @@ type Server struct {
 	personalHandler   ports.IPersonalHandler
 	utcampusHandler   ports.IUtcampusHandler
 	materiaHandler    ports.IMateriaHandler
+	fakerHandler      ports.IFakerHandler
 }
 
 func NewServer(alHdlr ports.IAlumnoHandler, carHdlr ports.ICarreraHandler,
 	estHdlr ports.IEstudianteHandler, grHdlr ports.IGrupoHandler,
 	peHdlr ports.IPeriodoHandler, persHdlr ports.IPersonalHandler,
-	utcHdlr ports.IUtcampusHandler, matHdlr ports.IMateriaHandler) *Server {
+	utcHdlr ports.IUtcampusHandler, matHdlr ports.IMateriaHandler,
+	fakerHdlr ports.IFakerHandler) *Server {
 	return &Server{
 		alumnoHandler:     alHdlr,
 		carreraHandler:    carHdlr,
@@ -31,6 +33,7 @@ func NewServer(alHdlr ports.IAlumnoHandler, carHdlr ports.ICarreraHandler,
 		personalHandler:   persHdlr,
 		utcampusHandler:   utcHdlr,
 		materiaHandler:    matHdlr,
+		fakerHandler:      fakerHdlr,
 	}
 }
 
@@ -44,6 +47,8 @@ func (s *Server) Initizalize() *fiber.App {
 	}))
 
 	// app.Use(middlewares.Autorizar)  no funciona porque bloquea el login también
+
+	app.Post("/createRandomData", s.fakerHandler.NuevoFaker)
 
 	alumno := app.Group("/alumno", middlewares.Autorizar)
 	alumno.Post("/", s.alumnoHandler.NuevoAlumno)

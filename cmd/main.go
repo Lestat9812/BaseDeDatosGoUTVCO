@@ -102,6 +102,10 @@ func main() {
 	carreraService := services.NewCarreraService(carreraRepository)
 	carreraHandler := handlers.NewCarreraHandler(carreraService)
 
+	fakerRepo := repositories.NewFakerRepository(db)
+	fakerServ := services.NewFakerService(fakerRepo)
+	fakerHand := handlers.NewFakerHandler(fakerServ)
+
 	server := server.NewServer(
 		alumnoHandler,
 		carreraHandler,
@@ -111,6 +115,7 @@ func main() {
 		personalHandler,
 		utcampusHandler,
 		materiaHandler,
+		fakerHand,
 	)
 
 	server.Initizalize().Listen(":8000")

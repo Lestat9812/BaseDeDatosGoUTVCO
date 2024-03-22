@@ -25,4 +25,5 @@ type Carrera struct {
 	Estadia               Estadia
 	Folio                 Folio
 	ReinscripcionTemporal ReinscripcionTemporal
+	Alumnos               []Alumno
 }

@@ -35,7 +35,7 @@ func (r *AlumnoRepository) SaveAlumno(alumno *domains.Alumno) error {
 
 func (r *AlumnoRepository) AllAlumnos() ([]*domains.AlumnoSinNada, error) {
 	var al []*domains.AlumnoSinNada
-	result2 := r.db.Model(domains.Alumno{}).Select("alumnos.id, alumnos.matricula, preficha.nombre, preficha.apellido_p, preficha.apellido_m").Joins("left join estudiantes on estudiantes.id = alumnos.estudiante_id").Joins("left join preficha on preficha.id=estudiantes.preficha_id").Scan(&al)
+	result2 := r.db.Model(domains.Alumno{}).Select("alumnos.id, alumnos.matricula, preficha.nombre, preficha.apellido_p, preficha.apellido_m, alumnos.carrera_id").Joins("left join estudiantes on estudiantes.id = alumnos.estudiante_id").Joins("left join preficha on preficha.id=estudiantes.preficha_id").Scan(&al)
 
 	if result2.RowsAffected == 0 {
 		return nil, errors.New("data not found")
