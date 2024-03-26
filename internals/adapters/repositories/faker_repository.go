@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-faker/faker/v4"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/Lestat9812/BaseDeDatosGoUTVCO/internals/core/domains"
 	"gorm.io/gorm"
@@ -30,6 +31,7 @@ func (r *FakerRepository) SaveFaker() error {
 	var aspirante domains.Aspirante
 	var estudiante domains.Estudiante
 	var carrera domains.Carrera
+	var password = "123456"
 	for i := 0; i < 10; i++ {
 		var car int = rand.Intn(9) + 1
 		var name = faker.FirstName()
@@ -47,16 +49,21 @@ func (r *FakerRepository) SaveFaker() error {
 		r.db.Model(&domains.Preficha{}).Select("id").Last(&preficha)
 		folio = folio + i
 		fmt.Println(folio)
-		result2 := r.db.Create(&domains.Aspirante{
-			Fecha:      time.Now().String(),
-			Folio:      folio,
-			CarFinal:   &car,
-			PeriodoID:  1,
-			Password:   "123456",
-			PrefichaID: preficha.ID + uint(i),
-		})
-		if result2.Error != nil {
-			return result2.Error
+		passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), 1)
+		if err != nil {
+			return err
+		} else {
+			result2 := r.db.Create(&domains.Aspirante{
+				Fecha:      time.Now().String(),
+				Folio:      folio,
+				CarFinal:   &car,
+				PeriodoID:  1,
+				Password:   string(passwordHash),
+				PrefichaID: preficha.ID + uint(i),
+			})
+			if result2.Error != nil {
+				return result2.Error
+			}
 		}
 		r.db.Model(&domains.Aspirante{}).Select("id, car_final, folio").Last(&aspirante)
 
@@ -90,17 +97,23 @@ func (r *FakerRepository) SaveFaker() error {
 		}
 		mat = mat + strings.Replace(strconv.Itoa(time.Now().Year()), "20", "", 1) + "20" + strconv.Itoa(folio)
 		fmt.Println(mat)
-		result4 := r.db.Create(&domains.Alumno{
-			Matricula: mat,
-			// Folio:      11 + i,
-			// PeriodoID:  1,
-			Password:     "123456",
-			CarreraID:    uint(car),
-			EstudianteID: estudiante.ID + uint(i),
-		})
-		if result4.Error != nil {
-			return result4.Error
+		passwordHash, err = bcrypt.GenerateFromPassword([]byte(password), 1)
+		if err != nil {
+			return err
+		} else {
+			result4 := r.db.Create(&domains.Alumno{
+				Matricula: mat,
+				// Folio:      11 + i,
+				// PeriodoID:  1,
+				Password:     string(passwordHash),
+				CarreraID:    uint(car),
+				EstudianteID: estudiante.ID + uint(i),
+			})
+			if result4.Error != nil {
+				return result4.Error
+			}
 		}
+
 	}
 	// result := r.db.Create(&domains.Alumno{})
 	return nil
